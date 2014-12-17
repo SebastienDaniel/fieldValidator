@@ -86,19 +86,19 @@ fieldValidator = (function() {
     var attributesToValidate = ['maxlength', 'minlength', 'max', 'min', 'type', 'required', 'step'],
         elementsToValidate = ['INPUT','SELECT','TEXTAREA'],
         passed = 'passed-validation', // CSS class to append to elements that PASS validation
-        failed = 'failed-validation', // CSS class to append to elements that FAIL validation
-        errorMsg = '';
+        failed = 'failed-validation'; // CSS class to append to elements that FAIL validation
     
         
     function validator(el, attribute) {
-        var attributeValue = el.getAttribute(at),
-            result;
+        var atValue = el.getAttribute(attribute),
+            result,
+			errorMsg = '';
 
-        switch (at) {
+        switch (attribute) {
             case 'maxlength':
                 if (el.value.toString().length > parseInt(atValue)) {
                     result = false;
-                    errorMsg = 'value too long, max length is ' + atValue ' characters');
+                    errorMsg = 'value too long, max length is ' + atValue + ' characters';
                 } else {
                     result = true;
                 }
@@ -107,7 +107,7 @@ fieldValidator = (function() {
             case 'minlength':
                 if (el.value.toString().length < parseInt(atValue)) {
                     result = false;
-                    errorMsg = 'value to short, minimum length is ' + atValue ' characters';
+                    errorMsg = 'value too short, minimum length is ' + atValue + ' characters';
                 } else {
                     result = true;
                 }
@@ -157,17 +157,21 @@ fieldValidator = (function() {
                 break;
         }
         
-        return result;
+        return {
+			result: result,
+			errorMsg: errorMsg,
+			node: el
+		};
     }
     
     // validates element (el) if it is of a type found in elementsToValidate
     // uses ats as a list of attributes to validate the element's value agains, otherwise it uses the module's attributesToValidate array
     function validateField(el, ats) {
-        var result = true,
+        var result,
             ats;
         
         // set the attributes to validate against
-        if (ats &&  = Object.prototype.toString.call(ats) === '[object Array]') {
+        if (ats && Object.prototype.toString.call(ats) === '[object Array]') {
             ats = ats;
         } else {
             ats = attributesToValidate;
@@ -182,16 +186,14 @@ fieldValidator = (function() {
         
         // run validator for each attribute present on element AND ats
         // if a failure is found, stop and return that error
-        result = !ats.some(function(a) {
+        ats.some(function(a) {
             if (!!el.getAttribute(a)) {
-                return !validator(el, a);
+                result = validator(el, a);
+				return !result.result;
             }
         });
         
-        return {
-            result: result,
-            errorMsg: errorMsg
-        };
+        return result
     }
     
     function validateAll(html, names, ats) {
@@ -201,14 +203,14 @@ fieldValidator = (function() {
             o = [];
         
         // set the element types to send to validator
-        if (names &&  = Object.prototype.toString.call(names) === '[object Array]') {
+        if (names && Object.prototype.toString.call(names) === '[object Array]') {
             names = names;
         } else {
             names = elementsToValidate;
         }
         
         // set the attributes to validate against
-        if (ats &&  = Object.prototype.toString.call(ats) === '[object Array]') {
+        if (ats && Object.prototype.toString.call(ats) === '[object Array]') {
             ats = ats;
         } else {
             ats = attributesToValidate;
@@ -216,19 +218,16 @@ fieldValidator = (function() {
         
         // build the array of elements to validate
         names.forEach(function(n) {
-            Array.prototyp.slice.call(html.getElementsByTagName(n)).forEach(function(v) {
+            Array.prototype.slice.call(html.getElementsByTagName(n)).forEach(function(v) {
                 els.push(v);
             });
         });
         
         els.forEach(function(el) {
-            o.push({
-                result: validateField(el, ats),
-                errorMsg: errorMsg
-            });
+            o.push(validateField(el, ats));
         });
         
-        return result;
+        return o;
     }
 
     // revealing public API
