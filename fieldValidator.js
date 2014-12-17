@@ -1,3 +1,18 @@
+/**
+ *  Validates form fields based on HTML5 field element attributes
+ *  
+ *  validateField()
+ *  method that parses a given HTML form element
+ *  returns an object: 
+ *  	result: true/false,
+ *  	errorMsg: 'string',
+ *  	node: reference to HTML DOM node validated
+ *  
+ *  validateAll() 
+ *  method accepts an HTML node and fetches all elements that fit the elementsToValidate types
+ *  returns an array of objects (such as the one returned by validateField()
+ *  
+ */
 fieldValidator = (function() {
     var attributesToValidate = ['maxlength', 'minlength', 'max', 'min', 'type', 'required', 'step'],
         elementsToValidate = ['INPUT','SELECT','TEXTAREA'],
