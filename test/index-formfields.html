@@ -1,0 +1,45 @@
+<html>
+    <head>
+        <script type="text/javascript" src="../fieldValidator.js"></script></script>
+        
+        
+    </head>
+    
+    <body>
+		<form novalidate="novalidate">
+			<span id="temporary-input-calc-element"></span>
+			<label for="first_name">text field
+				<input id="first_name" type="text" minlength="5" maxlength="10" placeholder="first name" name="first_name" />
+			</label>
+			
+			<label for="brand">Select dropdown
+				<select name="brand" id="brand">
+					<option value="1">Motorola</option>
+					<option value="2">Nexus</option>
+					<option value="3">Microsoft Windows Phone</option>
+				</select>
+			</label>
+			
+			<label for="checkme">Checkbox
+				<input name="checkme" type="checkbox" value="awesomness" />
+			</label>
+			
+			<label for="today">Date field
+				<input name="today" type="date" value="" placeholder="YYYY-MM-DD" />
+			</label>
+			
+			<label for="contactme">Email field
+				<input name="contactme" value="" required="required" type="email" placeholder="someone@somewhere.com" />
+			</label>
+			
+			<label for="data">Datalist
+				<input name="data" type="text" list="datalist" placeholder="Datalist test"/>
+				<datalist id="datalist">
+					<option value="1">Data 1</option>
+					<option value="2">Data 2</option>
+					<option value="null">null</option>
+				</datalist>
+			</label>
+		</form>
+    </body>
+</html>
