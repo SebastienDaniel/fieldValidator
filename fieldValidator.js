@@ -1,169 +1,170 @@
 /**
- *  Validates form fields based on HTML5 field element attributes
- *  
- *  validateField()
- *  method that parses a given HTML form element
- *  returns an object: 
- *  	result: true/false,
- *  	errorMsg: 'string',
- *  	node: reference to HTML DOM node validated
- *  
- *  validateAll() 
- *  method accepts an HTML node and fetches all elements that fit the elementsToValidate types
- *  returns an array of objects (such as the one returned by validateField()
- *  
+ * HTML form field validator
+ * creates no dependencies and makes no assumptions
+ * validates based on HTML5 field attributes
+ * if not attributes are set, no validation is done
+ *
+ * Directly manipulates the HTML elements
+ * will set a CSS class of "failed-validation" when validation fails
+ * will set a CSS class of "passed-validation" when validation succeeds
  */
 fieldValidator = (function() {
-    var attributesToValidate = ['maxlength', 'minlength', 'max', 'min', 'type', 'required', 'step'],
-        elementsToValidate = ['INPUT','SELECT','TEXTAREA'],
-        passed = 'passed-validation', // CSS class to append to elements that PASS validation
-        failed = 'failed-validation'; // CSS class to append to elements that FAIL validation
+    var attributes = ['maxlength', 'minlength', 'max', 'min', 'type', 'required', 'step'],
+        els = ['INPUT','SELECT','TEXTAREA'],
+        passed = 'passed-validation',
+        failed = 'failed-validation';
     
         
-    function validator(el, attribute) {
-        var atValue = el.getAttribute(attribute),
-            result,
-			errorMsg = '';
-
-        switch (attribute) {
-            case 'maxlength':
-                if (el.value.toString().length > parseInt(atValue)) {
-                    result = false;
-                    errorMsg = 'value too long, max length is ' + atValue + ' characters';
-                } else {
-                    result = true;
-                }
-                break;
-                
-            case 'minlength':
-                if (el.value.toString().length < parseInt(atValue)) {
-                    result = false;
-                    errorMsg = 'value too short, minimum length is ' + atValue + ' characters';
-                } else {
-                    result = true;
-                }
-                break;
-                
-            case 'min':
-                if (parseFloat(el.value) < parseFloat(atValue)) {
-                    result = false;
-                    errorMsg = 'value is below minimum value (' + atValue + ')';
-                } else {
-                    result = true;
-                }
-                break;
-                
-            case 'max':
-                if (parseFloat(el.value) > parseFloat(atValue)) {
-                    result = false;
-                    errorMsg = 'value is above maxmimum value (' + atValue + ')';
-                } else {
-                    result = true;
-                }
-                break;
-                
-            case 'step':
-                if (parseInt(el.value) % parseInt(atValue) !== 0) {
-                    result = false;
-                    errorMsg = 'value is not a multiple of ' + atValue;
-                } else {
-                    result = true;
-                }
-                break;
-                
-            case 'required':
-                if (el.value === '' || el.value === 'null') {
-                    result = false;
-                    errorMsg = 'this field is required';
-                } else {
-                    result = true;
-                }
-                break;
-                
-            case 'type':
-                result = true;
-                break;
-                
-            default:
-                break;
-        }
+    /**
+     * expects an HTML object
+     * Will do direct manipulation of the HTML fields
+     * 
+     * returns true if all fields validate, false otherwise
+     */
+    function validate(html) {
+        var result = true;
         
-        return {
-			result: result,
-			errorMsg: errorMsg,
-			node: el
-		};
-    }
-    
-    // validates element (el) if it is of a type found in elementsToValidate
-    // uses ats as a list of attributes to validate the element's value agains, otherwise it uses the module's attributesToValidate array
-    function validateField(el, ats) {
-        var result,
-            ats;
-        
-        // set the attributes to validate against
-        if (ats && Object.prototype.toString.call(ats) === '[object Array]') {
-            ats = ats;
-        } else {
-            ats = attributesToValidate;
-        }
+        // get all relevant elements
+        els.forEach(function(el) {
+            var fields = html.getElementsByTagName(el),
+                max = fields.length,
+                v,
+                i;
             
-        // verify that el is a valid element
-        if (!elementsToValidate.some(function(a) {
-                return el.tagName.toUpperCase() === a.toUpperCase();
-            })) {
-            throw new Error(el.tagName + ' is not a valid element');
-        }
-        
-        // run validator for each attribute present on element AND ats
-        // if a failure is found, stop and return that error
-        ats.some(function(a) {
-            if (!!el.getAttribute(a)) {
-                result = validator(el, a);
-				return !result.result;
+            // pass each element through the validator
+            for (i = 0; i < max; i++) {
+                if (fields[i].value !== 'null' || fields[i].value !== '') {
+                    v = fields[i].value
+                }
+                
+                // pass validation only if field is required OR if it has a value
+                if (fields[i].getAttribute('required') === 'required' || !!v) {
+                    // remove existing validation classes
+                    ct.removeClass(passed, fields[i]);
+                    ct.removeClass(failed, fields[i]);
+                    
+                    // apply current validation result class
+                    if(validator(fields[i])) {
+                        ct.appendClass(passed, fields[i]);
+                    } else {
+                        ct.appendClass(failed, fields[i]);
+                        result = false;
+                    }
+                }
             }
         });
         
-        return result
+        return result;
     }
     
-    function validateAll(html, names, ats) {
-        var result = true,
-            els = [],
-            names,
-            o = [];
-        
-        // set the element types to send to validator
-        if (names && Object.prototype.toString.call(names) === '[object Array]') {
-            names = names;
-        } else {
-            names = elementsToValidate;
-        }
-        
-        // set the attributes to validate against
-        if (ats && Object.prototype.toString.call(ats) === '[object Array]') {
-            ats = ats;
-        } else {
-            ats = attributesToValidate;
-        }
-        
-        // build the array of elements to validate
-        names.forEach(function(n) {
-            Array.prototype.slice.call(html.getElementsByTagName(n)).forEach(function(v) {
-                els.push(v);
-            });
+    function validator(el) {
+        // for each attribute, check if the element has that attribute
+        return !attributes.some(function(at) {
+            // if true, process validation
+            if (el.hasAttribute(at)) {
+                console.log(el.getAttribute('data-erp') + ' has attribute ' + at);
+                //console.log('result = ' + check(el, at));
+                
+                return !check(el, at);
+            }
         });
         
-        els.forEach(function(el) {
-            o.push(validateField(el, ats));
-        });
-        
-        return o;
+        function check(el, at) {
+            var atValue = el.getAttribute(at),
+                result;
+
+            switch (at) {
+                case 'maxlength':
+                    console.log('string length = ' + el.value.toString().length);
+                    console.log('maxlength = ' + parseInt(atValue));
+                    if (el.value.toString().length > parseInt(atValue)) {
+                        result = false;
+                        console.log('failed maxlength');
+                    } else {
+                        result = true;
+                    }
+                    break;
+                    
+                case 'minlength':
+                    if (el.value.toString().length < parseInt(atValue)) {
+                        result = false;
+                        console.log('failed minlength');
+                    } else {
+                        result = true;
+                    }
+                    break;
+                    
+                case 'min':
+                    if (parseFloat(el.value) < parseFloat(atValue)) {
+                        result = false;
+                        console.log('failed min');
+                    } else {
+                        result = true;
+                    }
+                    break;
+                    
+                case 'max':
+                    if (parseFloat(el.value) > parseFloat(atValue)) {
+                        result = false;
+                        console.log('failed max');
+                    } else {
+                        result = true;
+                    }
+                    break;
+                    
+                case 'step':
+                    if (parseInt(el.value) % parseInt(atValue) !== 0) {
+                        result = false;
+                        console.log('failed step');
+                    } else {
+                        result = true;
+                    }
+                    break;
+                    
+                case 'required':
+                    if (el.value === '' || el.value === 'null') {
+                        result = false;
+                        console.log('failed required');
+                    } else {
+                        result = true;
+                    }
+                    break;
+                    
+                case 'type':
+                    var dateRegex = '/^\d{4}[\/\-](0?[1-9]|1[012])[\/\-](0?[1-9]|[12][0-9]|3[01])$/',
+                        numberRegex = '/[^0-9]/';
+            
+                    result = true;
+                    console.log('fieldValidator TYPE');
+                    console.log(el.type);
+                    // dates
+                    if (atValue === 'date') {
+                        el.value.replace(/\/\//g, '-');
+                    }
+                    
+                    // numbers
+                    if (atValue === 'number') {
+                        console.log('number detected');
+                        console.log(el.value.match(numberRegex));
+                        console.log(el.value);
+                        if (el.value.match(numberRegex) !== null || el.value === '') {
+                            result = false;
+                        } else {
+                            result = true;
+                        }
+                    }
+                    break;
+                    
+                default:
+                    break;
+            }
+            
+            return result;
+        }
     }
 
     // revealing public API
     return {
-        validateField: validateField,
-        validateAll: validateAll
+        validate: validate
     };
 }());
