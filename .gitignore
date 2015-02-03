@@ -217,8 +217,8 @@ pip-log.txt
 ###########################
 ##  CUSTOM GIT IGNORES
 ###########################
-.node_modules
-.build
+/node_modules
+/build
 .komodoproject
-.documentation
+/documentation
 

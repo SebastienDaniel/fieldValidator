@@ -3,6 +3,19 @@ module.exports = function(grunt) {
     
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
+        removelogging: {
+            dev: {
+                src: "build/dev/js/fieldValidator.js"
+            }
+        },
+        jshint: {
+            dev: ["build/dev/js/**/*.js"]
+        },
+        clean: {
+            dev: {
+                src: ["build/dev/**"]
+            }
+        },
         copy: {
             dev: {
                 files: [
@@ -23,9 +36,13 @@ module.exports = function(grunt) {
                 dest: 'build/prod/index.html'
             }
         },
-        clean: {
+        jscs: {
             dev: {
-                src: ["build/dev/**"]
+                src: "build/dev/js/*.js",
+                options: {
+                    preset: "jquery",
+                    validateLineBreaks: "CRLF"
+                }
             }
         }
     });
@@ -33,7 +50,11 @@ module.exports = function(grunt) {
     // Load the plugins
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks('grunt-remove-logging');
+    grunt.loadNpmTasks('grunt-contrib-jshint');
+    grunt.loadNpmTasks('grunt-jscs-checker');
     
-    grunt.registerTask('dev-build', ['clean:dev', 'copy:dev']);
-    grunt.registerTask('prod-build', ['copy:prod']);
+    // dev build starts by wiping build/dev/ clean
+    grunt.registerTask('dev-build', ['clean:dev', 'copy:dev', 'removelogging:dev', 'jshint:dev', 'jscs:dev']);
+    //grunt.registerTask('prod-build', ['copy:prod']);
 };
