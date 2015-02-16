@@ -40,8 +40,7 @@ module.exports = function(grunt) {
             dev: {
                 src: "build/dev/js/*.js",
                 options: {
-                    preset: "jquery",
-                    validateLineBreaks: "CRLF"
+                    config: "askarii-jscs.json"
                 }
             }
         }
