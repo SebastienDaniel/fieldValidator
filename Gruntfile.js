@@ -2,58 +2,42 @@ module.exports = function(grunt) {
     // instructions for grunt
     
     grunt.initConfig({
-        pkg: grunt.file.readJSON('package.json'),
+        pkg: grunt.file.readJSON("package.json"),
         removelogging: {
-            dev: {
-                src: "build/dev/js/fieldValidator.js"
+            build: {
+                src: "src/scripts/fieldValidator.js"
+            }
+        },
+        uglify: {
+            build: {
+                options: {
+                    mangle: true,
+                    compress: true,
+                    screwIE8: true
+                },
+                src: "src/scripts/fieldValidator.js",
+                dest: "build/js/fieldValidator.min.js"
             }
         },
         jshint: {
-            dev: ["build/dev/js/**/*.js"]
-        },
-        clean: {
-            dev: {
-                src: ["build/dev/**"]
-            }
-        },
-        copy: {
-            dev: {
-                files: [
-                    {
-                        src: 'src/index.html',
-                        dest: 'build/dev/index.html'
-                    },
-                    {
-                        expand: true,
-                        cwd: 'src/scripts/',
-                        src: ['**/*.js'],
-                        dest: 'build/dev/js/'
-                    }
-                ]
-            },
-            prod: {
-                src: 'src/index.html',
-                dest: 'build/prod/index.html'
-            }
+            src: ["src/scripts/**/*.js"]
         },
         jscs: {
-            dev: {
-                src: "build/dev/js/*.js",
-                options: {
-                    config: "askarii-jscs.json"
-                }
+            src: "src/scripts/**/*.js",
+            options: {
+                config: "askarii-jscs.json"
             }
         }
     });
 
     // Load the plugins
-    grunt.loadNpmTasks('grunt-contrib-clean');
-    grunt.loadNpmTasks('grunt-contrib-copy');
-    grunt.loadNpmTasks('grunt-remove-logging');
-    grunt.loadNpmTasks('grunt-contrib-jshint');
-    grunt.loadNpmTasks('grunt-jscs-checker');
+    grunt.loadNpmTasks("grunt-remove-logging");
+    grunt.loadNpmTasks("grunt-contrib-jshint");
+    grunt.loadNpmTasks("grunt-jscs-checker");
+    grunt.loadNpmTasks("grunt-contrib-uglify");
     
     // dev build starts by wiping build/dev/ clean
-    grunt.registerTask('dev-build', ['clean:dev', 'copy:dev', 'removelogging:dev', 'jshint:dev', 'jscs:dev']);
-    //grunt.registerTask('prod-build', ['copy:prod']);
+    grunt.registerTask("test", ["jshint", "jscs"]);
+    grunt.registerTask("build", ["jshint", "jscs", "removelogging:build", "uglify:build"]);
+    //grunt.registerTask("prod-build", ["copy:prod"]);
 };
