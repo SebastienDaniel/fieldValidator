@@ -1,13 +1,16 @@
 
-/* HTML form field validator
- * creates no dependencies and makes no assumptions
+/**
+ * HTML form field validator
+ *
+ * Creates no dependencies and makes no assumptions
  * validates based on HTML5 field attributes
  * if no attributes are set, no validation is done
  *
  * Returns an array of objects containing a reference to the field
  * element being validated and its errors (based on attribute-name)
+ *
+ * @namespace fieldValidator
  */
-
 var fieldValidator = (function() {
     "use strict";
     /**
@@ -36,8 +39,11 @@ var fieldValidator = (function() {
                     "date": /(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))$/, // YYYY-MM-DD
                     "datetime": /^([0-2][0-9]{3})\-([0-1][0-9])\-([0-3][0-9])T([0-5][0-9])\:([0-5][0-9])\:([0-5][0-9])(Z|([\-\+]([0-1][0-9])\:00))$/,
                     "number": /^[-+]?\d*(?:[\.\,]\d+)?$/,
-                    //"integer": /^[-+]?\d+$/,
+                    "integer": /^[-+]?\d+$/,
                     "url": "",
+                    "text": "",
+                    "checkbox": "",
+                    "radio": "",
 		            "time": /^(0[0-9]|1[0-9]|2[0-3])(:[0-5][0-9]){2}$/, // HH:MM:SS
                     "color": /^#?([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/ // #FFF #FFFFFF
                 };
@@ -133,8 +139,15 @@ var fieldValidator = (function() {
                 result = false;
             }
 
+            // filter unrequired checkboxes
+            if (el.getAttribute("type").toLowerCase() === "checkbox") {
+                if (el.required === false) {
+                    result = false;
+                }
+            }
+
             // filter out buttons
-            if (el.type.toLowerCase() === "button") {
+            if (el.type.toLowerCase() === "button" || el.type.toLowerCase() === "submit") {
                 result = false;
             }
 
@@ -157,7 +170,7 @@ var fieldValidator = (function() {
         // pass validation for each attribute on field element
         Object.keys(attributes).forEach(function(a) {
             if (this.hasAttribute(a)) {
-                // validate against it"s paired function
+                // validate against it's paired function
                 if (!attributes[a](this)) {
                     // if failed, add violation and set field result to false
                     o.violations.push(a);
@@ -173,7 +186,14 @@ var fieldValidator = (function() {
     }
 
     /**
-     *  requires an HTML object reference
+     * @memberof fieldValidator
+     * @param {object} h must be HTML element
+     * @returns {Array}
+     * Array of objects for each field validated, containing:
+     *
+     * valid: true/false
+     * errors: array
+     * field: reference to HTML field
      */
     function validate(h) {
         var html = h || document.body,

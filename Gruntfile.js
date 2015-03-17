@@ -27,14 +27,24 @@ module.exports = function(grunt) {
             options: {
                 config: "askarii-jscs.json"
             }
+        },
+        jsdoc: {
+            dev: {
+                src: ['src/scripts/**/*.js'],
+                options: {
+                    destination: 'doc',
+                    configure : "node_modules/grunt-jsdoc/node_modules/ink-docstrap/template/jsdoc.conf.json"
+                }
+            }
         }
     });
 
     // Load the plugins
     grunt.loadNpmTasks("grunt-remove-logging");
     grunt.loadNpmTasks("grunt-contrib-jshint");
-    grunt.loadNpmTasks("grunt-jscs-checker");
+    grunt.loadNpmTasks("grunt-jscs");
     grunt.loadNpmTasks("grunt-contrib-uglify");
+    grunt.loadNpmTasks("grunt-jsdoc");
     
     // dev build starts by wiping build/dev/ clean
     grunt.registerTask("test", ["jshint", "jscs"]);
