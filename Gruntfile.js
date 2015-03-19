@@ -23,10 +23,7 @@ module.exports = function(grunt) {
             src: ["src/scripts/**/*.js"]
         },
         jscs: {
-            src: "src/scripts/**/*.js",
-            options: {
-                config: "askarii-jscs.json"
-            }
+            src: "src/scripts/**/*.js"
         },
         jsdoc: {
             dev: {

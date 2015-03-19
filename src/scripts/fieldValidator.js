@@ -12,7 +12,7 @@
  * @namespace fieldValidator
  */
 var fieldValidator = (function() {
-    "use strict";
+    'use strict';
     /**
      *  attribute-name and validating function pairing
      *  order is important
@@ -22,95 +22,54 @@ var fieldValidator = (function() {
             var r = true;
 
             // manage special case for checkboxes and radios
-            if (el.type.toLowerCase() === "checkbox" || el.type.toLowerCase() === "radio") {
+            if (el.type.toLowerCase() === 'checkbox' || el.type.toLowerCase() === 'radio') {
                 if (el.checked !== true) {
                     r = false;
                 }
-            } else if (el.value === "" || el.value === "null") {
+            } else if (el.value === '' || el.value === 'null') {
                 r = false;
             }
 
             return r;
         },
         type: function testType(el) {
-            var type = el.getAttribute("type").toLowerCase(),
+            var type = el.getAttribute('type').toLowerCase(),
                 patterns = {
-                    "email": /^[a-zA-Z0-9.!#$%&"*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/,
-                    "date": /(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))$/, // YYYY-MM-DD
-                    "datetime": /^([0-2][0-9]{3})\-([0-1][0-9])\-([0-3][0-9])T([0-5][0-9])\:([0-5][0-9])\:([0-5][0-9])(Z|([\-\+]([0-1][0-9])\:00))$/,
-                    "number": /^[-+]?\d*(?:[\.\,]\d+)?$/,
-                    "integer": /^[-+]?\d+$/,
-                    "url": "",
-                    "text": "",
-                    "checkbox": "",
-                    "radio": "",
-		            "time": /^(0[0-9]|1[0-9]|2[0-3])(:[0-5][0-9]){2}$/, // HH:MM:SS
-                    "color": /^#?([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/ // #FFF #FFFFFF
+                    'email': /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/,
+                    'date': /(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))$/, // YYYY-MM-DD
+                    'datetime': /^([0-2][0-9]{3})\-([0-1][0-9])\-([0-3][0-9])T([0-5][0-9])\:([0-5][0-9])\:([0-5][0-9])(Z|([\-\+]([0-1][0-9])\:00))$/,
+                    'number': /^[-+]?\d*(?:[\.\,]\d+)?$/,
+                    'integer': /^[-+]?\d+$/,
+                    'url': '',
+                    'text': '',
+                    'checkbox': '',
+                    'radio': '',
+		            'time': /^(0[0-9]|1[0-9]|2[0-3])(:[0-5][0-9]){2}$/, // HH:MM:SS
+                    'color': /^#?([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/ // #FFF #FFFFFF
                 };
 
             return el.value.match(patterns[type]);
         },
         maxlength: function testMaxlength(el) {
-            var atValue = el.getAttribute("maxlength"),
-                r = true;
-
-            if (el.value.toString().length > parseInt(atValue, 10)) {
-                r = false;
-            }
-
-            return r;
+            return el.value.toString().length < parseInt(el.getAttribute('maxlength'), 10);
         },
         minlength: function testMinlength(el) {
-            var atValue = el.getAttribute("minlength"),
-                r = true;
-
-            if (el.value.toString().length < parseInt(atValue, 10)) {
-                r = false;
-            }
-
-            return r;
+            return el.value.toString().length > parseInt(el.getAttribute('minlength'), 10);
         },
         max: function testMax(el) {
-            var atValue = el.getAttribute("max"),
-                result;
-
-            if (parseFloat(el.value) > parseFloat(atValue)) {
-                result = false;
-            } else {
-                result = true;
-            }
-
-            return result;
+            return parseFloat(el.value) < parseFloat(el.getAttribute('max'));
         },
         min: function testMin(el) {
-            var atValue = el.getAttribute("min"),
-                r = true;
-
-            if (parseFloat(el.value) < parseFloat(atValue)) {
-                r = false;
-            }
-
-            return r;
+            return parseFloat(el.value) > parseFloat(el.getAttribute('min'));
         },
         step: function testStep(el) {
-            var atValue = el.getAttribute("step"),
-                r;
-
-            if (parseInt(el.value, 10) % parseInt(atValue, 10) !== 0) {
-                r = false;
-            } else {
-                r = true;
-            }
-
-            return r;
+            return (parseInt(el.value, 10) % parseInt(atValue, 10)) === 0;
         },
         pattern: function testPattern(el) {
-            var atValue = el.getAttribute("pattern");
-
-            return el.value.match(atValue);
+            return el.value.match(el.getAttribute('pattern')) !== null;
         }
     },
-    tagNames = [ "INPUT", "SELECT", "TEXTAREA" ];
+    tagNames = [ 'INPUT', 'SELECT', 'TEXTAREA' ];
 
     /**
      *  get all valid form elements from HTML parent
@@ -135,19 +94,19 @@ var fieldValidator = (function() {
             var result = true;
 
             // filter unrequired fields that dont have a value
-            if (el.required === false && el.value === "") {
+            if (el.required === false && el.value === '') {
                 result = false;
             }
 
             // filter unrequired checkboxes
-            if (el.getAttribute("type").toLowerCase() === "checkbox") {
+            if (el.getAttribute('type').toLowerCase() === 'checkbox') {
                 if (el.required === false) {
                     result = false;
                 }
             }
 
             // filter out buttons
-            if (el.type.toLowerCase() === "button" || el.type.toLowerCase() === "submit") {
+            if (el.type.toLowerCase() === 'button' || el.type.toLowerCase() === 'submit') {
                 result = false;
             }
 
@@ -156,7 +115,7 @@ var fieldValidator = (function() {
     }
 
     /**
-     *  pass a field"s validations for all of its validable attributes
+     *  pass a field's validations for all of its validable attributes
      *  return a validation object
      */
     function validateField(f) {
@@ -177,8 +136,6 @@ var fieldValidator = (function() {
                     o.isValid = false;
                 }
             }
-
-            return;
         }, f);
 
         // return the validation object

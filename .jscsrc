@@ -1,18 +1,10 @@
 {
-    "requireCurlyBraces": [
-        "if",
-        "else",
-        "for",
-        "while",
-        "do",
-        "try",
-        "catch"
-    ],
     "disallowDanglingUnderscores": true,
     "disallowEmptyBlocks": true,
     "disallowKeywords": [
         "with",
-        "continue"
+        "continue",
+        "eval"
     ],
     "disallowKeywordsOnNewLine": [
         "else",
@@ -47,17 +39,7 @@
     "requireDotNotation": true,
     "requireLineFeedAtFileEnd": true,
     "requireParenthesesAroundIIFE": true,
-    "requireSpaceAfterBinaryOperators": [
-        "+",
-        "-",
-        "/",
-        "*",
-        "=",
-        "==",
-        "===",
-        "!=",
-        "!=="
-    ],
+    "requireSpaceAfterBinaryOperators": [ "+","-","/","*","=","==","===","!=","!==","?","%",">",">=","<","<=" ],
     "requireSpaceAfterKeywords": [
         "if",
         "else",
@@ -69,14 +51,7 @@
         "try",
         "catch"
     ],
-    "requireSpaceBeforeBinaryOperators": [
-          "=", "+=", "-=", "*=", "/=", "%=", "<<=", ">>=", ">>>=",
-        "&=", "|=", "^=", "+=",
-
-        "+", "-", "*", "/", "%", "<<", ">>", ">>>", "&",
-        "|", "^", "&&", "||", "===", "==", ">=",
-        "<=", "<", ">", "!=", "!=="
-    ],
+    "requireSpaceBeforeBinaryOperators": [ "=", "+=", "-=", "*=", "/=", "%=", "<<=", ">>=", ">>>=","&=", "|=", "^=", "+=","+", "-", "*", "/", "%", "<<", ">>", ">>>", "&","|", "^", "&&", "||", "===", "==", ">=","<=", "<", ">", "!=", "!==" ],
     "requireSpacesInAnonymousFunctionExpression": {
         "beforeOpeningCurlyBrace": true
     },
@@ -87,7 +62,8 @@
         "beforeOpeningCurlyBrace": true
     },
     "validateQuoteMarks": {
-        "mark": "\"",
+        "mark": "'",
         "escape": true
-    }
+    },
+   "validateIndentation": 4
 }
