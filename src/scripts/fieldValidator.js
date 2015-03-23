@@ -21,8 +21,8 @@ var fieldValidator = (function() {
         required: function testRequired(el) {
             var r = true;
 
-            // manage special case for checkboxes and radios
-            if (el.type.toLowerCase() === 'checkbox' || el.type.toLowerCase() === 'radio') {
+            // manage special case for checkboxes
+            if (el.type.toLowerCase() === 'checkbox') {
                 if (el.checked !== true) {
                     r = false;
                 }
@@ -91,7 +91,8 @@ var fieldValidator = (function() {
      */
     function filterFalsePositives(a) {
         return a.filter(function(el) {
-            var result = true;
+            var result = true,
+                tempRadios;
 
             // filter unrequired fields that dont have a value
             if (el.required === false && el.value === '') {
@@ -99,10 +100,22 @@ var fieldValidator = (function() {
             }
 
             // filter unrequired checkboxes
-            if (el.getAttribute('type').toLowerCase() === 'checkbox') {
+            console.log(el);
+            if (el.tagName === 'INPUT' && el.getAttribute('type').toLowerCase() === 'checkbox') {
                 if (el.required === false) {
                     result = false;
                 }
+            }
+
+            // filter unrequired radios
+            if (el.tagName === 'INPUT' && el.getAttribute('type').toLowerCase() === 'radio') {
+                tempRadios = a.filter(function(r) {
+                    return r.getAttribute('name') === el.getAttribute('name');
+                });
+
+                result = tempRadios.some(function(r) {
+                    return r.required;
+                });
             }
 
             // filter out buttons
@@ -142,6 +155,29 @@ var fieldValidator = (function() {
         return o;
     }
 
+    // checks if any of the radio's group has been checked
+    function validateRadio(radio, els) {
+        var o = {
+            field: radio,
+            violations: [],
+            isValid: true // assume validity until proven otherwise
+            },
+            name = radio.getAttribute('name');
+
+        els = els.filter(function(el) {
+            return el.getAttribute('name') === name;
+        });
+
+        if (!els.some(function(el) {
+                return el.checked;
+            })) {
+            o.isValid = false;
+            o.violations.push('required');
+        }
+
+        return o;
+    }
+
     /**
      * @memberof fieldValidator
      * @param {object} h must be HTML element
@@ -172,7 +208,13 @@ var fieldValidator = (function() {
         // process all fields
         // compile the results array with validation objects
         for (i = 0; i < els.length; i++) {
-            results.push(validateField(els[i]));
+            if (els[i].getAttribute('type') === 'radio') {
+                results.push(validateRadio(els[i], els.filter(function(el) {
+                    return el.getAttribute('type') === 'radio';
+                })));
+            } else {
+                results.push(validateField(els[i]));
+            }
         }
 
         // return results array
