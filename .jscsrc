@@ -32,7 +32,7 @@
     "disallowPaddingNewlinesInBlocks": true,
     "maximumLineLength": 200,
     "requireBlocksOnNewline": true,
-    "requireCamelCaseOrUpperCaseIdentifiers": true,
+    "requireCamelCaseOrUpperCaseIdentifiers": "ignoreProperties",
     "requireCapitalizedConstructors": true,
     "requireCommaBeforeLineBreak": true,
     "requireCurlyBraces": true,
@@ -62,7 +62,7 @@
         "beforeOpeningCurlyBrace": true
     },
     "validateQuoteMarks": {
-        "mark": "'",
+        "mark": "\"",
         "escape": true
     },
    "validateIndentation": 4

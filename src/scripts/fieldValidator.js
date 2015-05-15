@@ -12,7 +12,7 @@
  * @namespace fieldValidator
  */
 var fieldValidator = (function() {
-    'use strict';
+    "use strict";
     /**
      *  attribute-name and validating function pairing
      *  order is important
@@ -22,54 +22,54 @@ var fieldValidator = (function() {
             var r = true;
 
             // manage special case for checkboxes
-            if (el.type.toLowerCase() === 'checkbox') {
+            if (el.type.toLowerCase() === "checkbox") {
                 if (el.checked !== true) {
                     r = false;
                 }
-            } else if (el.value === '' || el.value === 'null') {
+            } else if (el.value === "" || el.value === "null") {
                 r = false;
             }
 
             return r;
         },
         type: function testType(el) {
-            var type = el.getAttribute('type').toLowerCase(),
+            var type = el.getAttribute("type").toLowerCase(),
                 patterns = {
-                    'email': /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/,
-                    'date': /(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))$/, // YYYY-MM-DD
-                    'datetime': /^([0-2][0-9]{3})\-([0-1][0-9])\-([0-3][0-9])T([0-5][0-9])\:([0-5][0-9])\:([0-5][0-9])(Z|([\-\+]([0-1][0-9])\:00))$/,
-                    'number': /^[-+]?\d*(?:[\.\,]\d+)?$/,
-                    'integer': /^[-+]?\d+$/,
-                    'url': '',
-                    'text': '',
-                    'checkbox': '',
-                    'radio': '',
-		            'time': /^(0[0-9]|1[0-9]|2[0-3])(:[0-5][0-9]){2}$/, // HH:MM:SS
-                    'color': /^#?([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/ // #FFF #FFFFFF
+                    "email": /^[a-zA-Z0-9.!#$%&"*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/,
+                    "date": /(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))$/, // YYYY-MM-DD
+                    "datetime": /^([0-2][0-9]{3})\-([0-1][0-9])\-([0-3][0-9])T([0-5][0-9])\:([0-5][0-9])\:([0-5][0-9])(Z|([\-\+]([0-1][0-9])\:00))$/,
+                    "number": /^[-+]?\d*(?:[\.\,]\d+)?$/,
+                    "integer": /^[-+]?\d+$/,
+                    "url": "",
+                    "text": "",
+                    "checkbox": "",
+                    "radio": "",
+		            "time": /^(0[0-9]|1[0-9]|2[0-3])(:[0-5][0-9]){2}$/, // HH:MM:SS
+                    "color": /^#?([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/ // #FFF #FFFFFF
                 };
 
             return el.value.match(patterns[type]);
         },
         maxlength: function testMaxlength(el) {
-            return el.value.toString().length < parseInt(el.getAttribute('maxlength'), 10);
+            return el.value.toString().length < parseInt(el.getAttribute("maxlength"), 10);
         },
         minlength: function testMinlength(el) {
-            return el.value.toString().length > parseInt(el.getAttribute('minlength'), 10);
+            return el.value.toString().length > parseInt(el.getAttribute("minlength"), 10);
         },
         max: function testMax(el) {
-            return parseFloat(el.value) < parseFloat(el.getAttribute('max'));
+            return parseFloat(el.value) < parseFloat(el.getAttribute("max"));
         },
         min: function testMin(el) {
-            return parseFloat(el.value) > parseFloat(el.getAttribute('min'));
+            return parseFloat(el.value) > parseFloat(el.getAttribute("min"));
         },
         step: function testStep(el) {
             return (parseInt(el.value, 10) % parseInt(atValue, 10)) === 0;
         },
         pattern: function testPattern(el) {
-            return el.value.match(el.getAttribute('pattern')) !== null;
+            return el.value.match(el.getAttribute("pattern")) !== null;
         }
     },
-    tagNames = [ 'INPUT', 'SELECT', 'TEXTAREA' ];
+    tagNames = [ "INPUT", "SELECT", "TEXTAREA" ];
 
     /**
      *  get all valid form elements from HTML parent
@@ -95,22 +95,21 @@ var fieldValidator = (function() {
                 tempRadios;
 
             // filter unrequired fields that dont have a value
-            if (el.required === false && el.value === '') {
+            if (el.required === false && el.value === "") {
                 result = false;
             }
 
             // filter unrequired checkboxes
-            console.log(el);
-            if (el.tagName === 'INPUT' && el.getAttribute('type').toLowerCase() === 'checkbox') {
+            if (el.tagName === "INPUT" && el.getAttribute("type").toLowerCase() === "checkbox") {
                 if (el.required === false) {
                     result = false;
                 }
             }
 
             // filter unrequired radios
-            if (el.tagName === 'INPUT' && el.getAttribute('type').toLowerCase() === 'radio') {
+            if (el.tagName === "INPUT" && el.getAttribute("type").toLowerCase() === "radio") {
                 tempRadios = a.filter(function(r) {
-                    return r.getAttribute('name') === el.getAttribute('name');
+                    return r.getAttribute("name") === el.getAttribute("name");
                 });
 
                 result = tempRadios.some(function(r) {
@@ -119,7 +118,7 @@ var fieldValidator = (function() {
             }
 
             // filter out buttons
-            if (el.type.toLowerCase() === 'button' || el.type.toLowerCase() === 'submit') {
+            if (el.type.toLowerCase() === "button" || el.type.toLowerCase() === "submit") {
                 result = false;
             }
 
@@ -128,7 +127,7 @@ var fieldValidator = (function() {
     }
 
     /**
-     *  pass a field's validations for all of its validable attributes
+     *  pass a field"s validations for all of its validable attributes
      *  return a validation object
      */
     function validateField(f) {
@@ -142,7 +141,7 @@ var fieldValidator = (function() {
         // pass validation for each attribute on field element
         Object.keys(attributes).forEach(function(a) {
             if (this.hasAttribute(a)) {
-                // validate against it's paired function
+                // validate against it"s paired function
                 if (!attributes[a](this)) {
                     // if failed, add violation and set field result to false
                     o.violations.push(a);
@@ -155,24 +154,24 @@ var fieldValidator = (function() {
         return o;
     }
 
-    // checks if any of the radio's group has been checked
+    // checks if any of the radio"s group has been checked
     function validateRadio(radio, els) {
         var o = {
             field: radio,
             violations: [],
             isValid: true // assume validity until proven otherwise
             },
-            name = radio.getAttribute('name');
+            name = radio.getAttribute("name");
 
         els = els.filter(function(el) {
-            return el.getAttribute('name') === name;
+            return el.getAttribute("name") === name;
         });
 
         if (!els.some(function(el) {
                 return el.checked;
             })) {
             o.isValid = false;
-            o.violations.push('required');
+            o.violations.push("required");
         }
 
         return o;
@@ -208,9 +207,9 @@ var fieldValidator = (function() {
         // process all fields
         // compile the results array with validation objects
         for (i = 0; i < els.length; i++) {
-            if (els[i].getAttribute('type') === 'radio') {
+            if (els[i].getAttribute("type") === "radio") {
                 results.push(validateRadio(els[i], els.filter(function(el) {
-                    return el.getAttribute('type') === 'radio';
+                    return el.getAttribute("type") === "radio";
                 })));
             } else {
                 results.push(validateField(els[i]));

@@ -13,7 +13,7 @@ module.exports = function(grunt) {
                 options: {
                     mangle: true,
                     compress: true,
-                    screwIE8: true
+                    screw_ie8: true
                 },
                 src: "src/scripts/fieldValidator.js",
                 dest: "build/js/fieldValidator.min.js"
