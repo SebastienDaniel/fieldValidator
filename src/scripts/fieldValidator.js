@@ -63,7 +63,7 @@ var fieldValidator = (function() {
             return parseFloat(el.value) > parseFloat(el.getAttribute("min"));
         },
         step: function testStep(el) {
-            return (parseInt(el.value, 10) % parseInt(atValue, 10)) === 0;
+            return (parseInt(el.value, 10) % parseInt(el.getAttribute("step"), 10)) === 0;
         },
         pattern: function testPattern(el) {
             return el.value.match(el.getAttribute("pattern")) !== null;
