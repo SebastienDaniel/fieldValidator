@@ -94,8 +94,8 @@ var fieldValidator = (function() {
             var result = true,
                 tempRadios;
 
-            // filter unrequired fields that dont have a value
-            if (el.required === false && el.value === "") {
+            // filter unrequired fields that dont validate (HTML5 standards)
+            if (el.required === false && el.validity.valid) {
                 result = false;
             }
 
