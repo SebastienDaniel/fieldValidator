@@ -1,0 +1,265 @@
+/**
+ * @namespace fieldValidator
+ */
+var fieldValidator = (function() {
+    "use strict";
+
+    // return an array of textareas
+    function getTextareas(source) {
+        if (source.tagName.toLowerCase() === "textarea") {
+            return [source];
+        } else {
+            return Array.prototype.slice.call(source.getElementsByTagName("textarea"));
+        }
+    }
+
+    // return an array of selects
+    function getSelects(source) {
+        if (source.tagName.toLowerCase() === "select") {
+            return [source];
+        } else {
+            return Array.prototype.slice.call(source.getElementsByTagName("select"));
+        }
+    }
+
+    // return an array of non checkbox or radio inputs.
+    function getInputs(source) {
+        if (source.tagName.toLowerCase() === "input" &&
+            source.getAttribute("type").toLowerCase() !== "radio" &&
+            source.getAttribute("type").toLowerCase() !== "checkbox") {
+            return [source];
+        } else {
+            return Array.prototype.slice.call(source.getElementsByTagName("input")).filter(function(i) {
+                return i.getAttribute("type").toLowerCase() !== "checkbox" && i.getAttribute("type").toLowerCase() !== "radio";
+            });
+        }
+    }
+
+    // return an object of checkbox arrays, separated by the "name" property
+    function getCheckboxes(source) {
+        var o = {};
+        if (source.tagName.toLowerCase() === "input" && source.getAttribute("type").toLowerCase() === "checkbox") {
+            o[source.getAttribute("name").toLowerCase()] = [source];
+        } else {
+            Array.prototype.slice.call(source.getElementsByTagName("input")).filter(function(i) {
+                return i.getAttribute("type").toLowerCase() === "checkbox";
+            }).forEach(function(c) {
+                var n = c.getAttribute("name").toLowerCase();
+
+                if (o[n]) {
+                    o[n].push(c);
+                } else {
+                    o[n] = [c];
+                }
+            });
+        }
+
+        return o;
+    }
+
+    // return an object of radio arrays, separated by the "name" property
+    function getRadios(source) {
+        var o = {};
+        if (source.tagName.toLowerCase() === "input" && source.getAttribute("type").toLowerCase() === "radio") {
+            o[source.getAttribute("name").toLowerCase()] = [source];
+        } else {
+            Array.prototype.slice.call(source.getElementsByTagName("input")).filter(function(i) {
+                return i.getAttribute("type").toLowerCase() === "radio";
+            }).forEach(function(c) {
+                var n = c.getAttribute("name").toLowerCase();
+
+                if (o[n]) {
+                    o[n].push(c);
+                } else {
+                    o[n] = [c];
+                }
+            });
+        }
+
+        return o;
+    }
+
+    /**
+     * @memberof fieldValidator
+     * @private
+     *
+     * @summary scans through the provided HTML object an retrieves all supportedElements
+     * @param html {Object} HTML element to scan (if it is a supportedElement, it will be the only element scanned)
+     * @returns {Object} Object of arrays of all supportedElements extracted from html
+     */
+    function getFields(html) {
+        var fields = {};
+
+        fields.selects = getSelects(html);
+        fields.textareas = getTextareas(html);
+        fields.inputs = removeButtons(getInputs(html));
+        fields.checkboxes = getCheckboxes(html);
+        fields.radios = getRadios(html);
+
+        return fields;
+    }
+
+    /**
+     * @memberof fieldValidator
+     * @private
+     *
+     * @summary removes all "button" types, since they do not capture user input (data)
+     * @param a {Array} the array of elements to clean
+     * @returns {Array} new Array, without the rejected button "types"
+     */
+    function removeButtons(a) {
+        var buttons = ["submit", "reset", "file", "button"],
+            i,
+            j,
+            aL = a.length,
+            rL = buttons.length,
+            type,
+            f,
+            b = [];
+
+        for (i = 0; i < aL; i++) {
+            j = 0;
+            f = false;
+            type = a[i].getAttribute("type").toLowerCase();
+
+            // check if element Type is to be rejected
+            while (!f && j < rL) {
+                if (type === buttons[j]) {
+                    f = true;
+                }
+                j++;
+            }
+
+            // if not rejected, add to new array
+            if (!f) {
+                b.push(a[i]);
+            }
+        }
+
+        return b;
+    }
+
+    // TODO: must handle validityState when it is a browser feature. It prevents capturing of user-input when data is invalid.
+    function validateType(el) {
+        var typePatterns = {
+            "email": /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/,
+            "date": /(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))$/, // YYYY-MM-DD
+            "datetime": /^([0-2][0-9]{3})\-([0-1][0-9])\-([0-3][0-9])T([0-5][0-9])\:([0-5][0-9])\:([0-5][0-9])(Z|([\-\+]([0-1][0-9])\:00))$/,
+            "number": /^[-+]?\d*(?:[\.\,]\d+)?$/,
+            "url": /^(https?|ftp|file|ssh):\/\/([-;:&=\+\$,\w]+@{1})?([-A-Za-z0-9\.]+)+:?(\d+)?((\/[-\+~%\/\.\w]+)?\??([-\+=&;%@\.\w]+)?#?([\w]+)?)?/,
+            "time": /^(0[0-9]|1[0-9]|2[0-3])(:[0-5][0-9]){2}$/, // HH:MM:SS
+            "color": /^#?([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/ // #FFF #FFFFFF
+            },
+            type = el.getAttribute("type").toLowerCase(),
+            result = true;
+
+        if (typePatterns[type]) {
+            console.log("testing type " + type);
+            console.log(el.value);
+            console.log(typePatterns[type].test(el.value));
+            result = typePatterns[type].test(el.value);
+        }
+
+        return result;
+    }
+
+    function validateAbstractStringType(el) {
+        var attributes = {
+                maxlength: function testMaxlength(el) {
+                    return el.value.toString().length <= parseInt(el.getAttribute("maxlength"), 10);
+                },
+                minlength: function testMinlength(el) {
+                    return el.value.toString().length >= parseInt(el.getAttribute("minlength"), 10);
+                },
+                pattern: function testPattern(el) {
+                    return new RegExp(el.getAttribute("pattern"), "g").test(el.value);
+                },
+                required: function testRequired(el) {
+                    return el.value.length > 0;
+                }
+            },
+            keys = Object.keys(attributes),
+            kL = keys.length,
+            o = {
+                field: el,
+                errors: [],
+                isValid: true
+            },
+            i;
+
+        for (i = 0; i < kL; i++) {
+            if (el.getAttribute(keys[i])) {
+                if (!attributes[keys[i]](el)) {
+                    o.isValid = false;
+                    o.errors.push(keys[i]);
+                }
+            }
+        }
+
+        return o;
+    }
+
+    function validateAbstractNumericType(el) {
+        var attributes = {
+                max: function testMax(el) {
+                    return parseFloat(el.value) <= parseFloat(el.getAttribute("max"));
+                },
+                min: function testMin(el) {
+                    return parseFloat(el.value) >= parseFloat(el.getAttribute("min"));
+                },
+                step: function testStep(el) {
+                    var step = el.getAttribute("step"),
+                        decimals = step.split(".").pop().length;
+
+                    return (el.value * Math.pow(10, decimals)) % (step * Math.pow(10, decimals)) === 0;
+                }
+            },
+            keys = Object.keys(attributes),
+            kL = keys.length,
+            o = {
+                field: el,
+                errors: [],
+                isValid: true
+            },
+            i;
+
+        for (i = 0; i < kL; i++) {
+            if (el.getAttribute(keys[i])) {
+                if (!attributes[keys[i]](el)) {
+                    o.isValid = false;
+                    o.errors.push(keys[i]);
+                }
+            }
+        }
+
+        return o;
+    }
+
+    return {
+        validate: function(html) {
+            // get the fields object
+            var f = getFields(html),
+                r = [];
+
+            // validate fields
+            f.inputs.forEach(function(i) {
+                var type = i.getAttribute("type").toLowerCase();
+
+                if (type === "text" || type === "email" || type === "url" || type === "tel") {
+                    r.push(validateAbstractStringType(i));
+                } else if (type === "number") {
+                    r.push(validateAbstractNumericType(i));
+                }
+            });
+
+            r.forEach(function(report) {
+                if (!validateType(report.field)) {
+                    report.errors.push("type");
+                    report.isValid = false;
+                }
+            });
+
+            return r;
+        }
+    };
+}());
