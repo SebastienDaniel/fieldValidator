@@ -44,7 +44,7 @@ var fieldValidator = (function() {
                     "text": "",
                     "checkbox": "",
                     "radio": "",
-		            "time": /^(0[0-9]|1[0-9]|2[0-3])(:[0-5][0-9]){2}$/, // HH:MM:SS
+                    "time": /^(0[0-9]|1[0-9]|2[0-3])(:[0-5][0-9]){2}$/, // HH:MM:SS
                     "color": /^#?([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/ // #FFF #FFFFFF
                 };
 
@@ -157,9 +157,9 @@ var fieldValidator = (function() {
     // checks if any of the radio"s group has been checked
     function validateRadio(radio, els) {
         var o = {
-            field: radio,
-            violations: [],
-            isValid: true // assume validity until proven otherwise
+                field: radio,
+                violations: [],
+                isValid: true // assume validity until proven otherwise
             },
             name = radio.getAttribute("name");
 

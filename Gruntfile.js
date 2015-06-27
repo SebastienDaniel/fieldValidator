@@ -8,12 +8,16 @@ module.exports = function(grunt) {
                 src: "src/scripts/fieldValidator.js"
             }
         },
+        clean: ["build/**"],
         uglify: {
             build: {
                 options: {
                     mangle: true,
                     compress: true,
-                    screw_ie8: true
+                    screw_ie8: true,
+                    preserveComments: false,
+                    mangleProperties: true,
+                    reserveDOMProperties: true
                 },
                 src: "src/scripts/fieldValidator.js",
                 dest: "build/js/fieldValidator.min.js"
@@ -33,6 +37,14 @@ module.exports = function(grunt) {
                     configure : "node_modules/grunt-jsdoc/node_modules/ink-docstrap/template/jsdoc.conf.json"
                 }
             }
+        },
+        jasmine: {
+            src: ["src/scripts/**/*.js"],
+            options: {
+                specs: ["test/*spec.js"], // jasmine node requires spec files to end with "spec.js"
+                helpers: "test/test-form.html",
+                summary: true
+            }
         }
     });
 
@@ -42,9 +54,11 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks("grunt-jscs");
     grunt.loadNpmTasks("grunt-contrib-uglify");
     grunt.loadNpmTasks("grunt-jsdoc");
+    grunt.loadNpmTasks("grunt-contrib-clean");
+    grunt.loadNpmTasks("grunt-contrib-jasmine");
     
     // dev build starts by wiping build/dev/ clean
-    grunt.registerTask("test", ["jshint", "jscs"]);
-    grunt.registerTask("build", ["jshint", "jscs", "removelogging:build", "uglify:build"]);
+    grunt.registerTask("test", ["jshint", "jscs", "jasmine"]);
+    grunt.registerTask("build", ["test", "clean", "removelogging:build", "uglify:build"]);
     //grunt.registerTask("prod-build", ["copy:prod"]);
 };

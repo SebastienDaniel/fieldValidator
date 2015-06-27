@@ -11,7 +11,7 @@
         <meta name="keywords" content="" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-        <script type="text/javascript" src="scripts/fieldValidator.js"></script>
+        <script type="text/javascript" src="scripts/new-version.js"></script>
         <link rel="shortcut icon" href="favicon.ico" />
 
     </head>
@@ -21,7 +21,7 @@
 			<label for="first_name">text field
 				<input requiREd="requIred" id="first_name" type="tEXt" minlength="5" MAXLength="10" placeholder="first name" name="first_name" />
 			</label>
-			
+			<hr/>
 			<label for="brand">Select dropdown
 				<select name="brand" id="brand">
 					<option value="1">Motorola</option>
@@ -29,19 +29,19 @@
 					<option value="3">Microsoft Windows Phone</option>
 				</select>
 			</label>
-			
+			<hr/>
 			<label for="checkme">Checkbox
 				<input name="checkme" required="required" type="checkbox" value="awesomness" />
 			</label>
-			
+			<hr/>
 			<label for="today">Date field
 				<input name="today" type="date" value="" placeholder="YYYY-MM-DD" />
 			</label>
-			
+			<hr/>
 			<label for="contactme">Email field
 				<input name="contactme" value="" required="required" type="email" placeholder="someone@somewhere.com" />
 			</label>
-			
+			<hr/>
 			<label for="data">Datalist
 				<input name="data" type="text" list="datalist" placeholder="Datalist test"/>
 				<datalist id="datalist">
@@ -50,25 +50,25 @@
 					<option value="null">null</option>
 				</datalist>
 			</label>
-            
+            <hr/>
+            <label for="radios2">
+                <input type="checkbox" name="cbgroup" value="1" />
+                <input type="checkbox" name="cbgroup" value="2" />
+                <input type="checkbox" name="cbgroup" value="3" />
+            </label>
+            <hr/>
             <label for="radios1">
                 <input type="radio" required="required" name="radios1" value="1" />
                 <input type="radio" name="radios1" value="2" />
-                <input type="radio" name="radios1" value="3" />
             </label>
-            
+            <hr/>
             <label for="radios2">
                 <input type="radio" name="radios2" value="1" />
-                <input type="radio" required="required" name="radios2" value="2" />
+                <input type="radio" name="radios2" value="2" />
                 <input type="radio" name="radios2" value="3" />
             </label>
+            <hr/>
         <input type="button" onclick="getValidation(this.parent);" value="Validate"></input>
 		</form>
-    
-        <script>
-            function getValidation(html) {
-                console.log(fieldValidator.validate(html));
-            }
-        </script>
     </body>
 </html>
