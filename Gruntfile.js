@@ -41,9 +41,8 @@ module.exports = function(grunt) {
         jasmine: {
             src: ["src/scripts/**/*.js"],
             options: {
-                specs: ["test/*spec.js"], // jasmine node requires spec files to end with "spec.js"
-                helpers: "test/test-form.html",
-                summary: true
+                specs: ["test/*spec.js"] // jasmine node requires spec files to end with "spec.js"
+                //helpers: "test/test-form.html",
             }
         }
     });
