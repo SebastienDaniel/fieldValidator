@@ -161,7 +161,7 @@ var fieldValidator = (function() {
                 violations: [],
                 isValid: true // assume validity until proven otherwise
             },
-            name = radio.getAttribute("name");
+            name = radio.getAttribute('name");
 
         els = els.filter(function(el) {
             return el.getAttribute("name") === name;
