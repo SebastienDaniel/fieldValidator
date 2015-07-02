@@ -16,9 +16,14 @@
     "grunt-contrib-jasmine": "^0.8.2",
     "grunt-contrib-jshint": "^0.10.0",
     "grunt-contrib-uglify": "^0.8.0",
+    "grunt-githooks": "^0.3.1",
     "grunt-jscs": "^1.5.0",
     "grunt-jsdoc": "^0.6.2",
-    "grunt-remove-logging": "^0.2.0"
+    "grunt-remove-logging": "^0.2.0",
+    "sync-exec": "^0.5.0"
   },
-  "private": false
+  "private": false,
+  "scripts": {
+    "postinstall": "grunt githooks"
+  }
 }

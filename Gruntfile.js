@@ -43,6 +43,19 @@ module.exports = function(grunt) {
             options: {
                 specs: ["test/*spec.js"]
             }
+        },
+        githooks: {
+            all: {
+                "pre-commit": {
+                    taskNames: "",
+                    template: "gitHookTemplate.txt",
+                    errorMsg: "Your files do not pass the quality tests\\nPlease fix your files before committing"
+                },
+                "pre-push": {
+                    taskNames: "",
+                    template: "gitHookTemplate.txt"
+                }
+            }
         }
     });
 
@@ -54,6 +67,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks("grunt-jsdoc");
     grunt.loadNpmTasks("grunt-contrib-clean");
     grunt.loadNpmTasks("grunt-contrib-jasmine");
+    grunt.loadNpmTasks("grunt-githooks");
     
     // dev build starts by wiping build/dev/ clean
     grunt.registerTask("test", ["jshint", "jscs", "jasmine"]);
