@@ -141,7 +141,7 @@ var fieldValidator = (function() {
 
     function validateType(el) {
         var typePatterns = {
-                "email": /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/,
+                "email": /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
                 "date": /(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))$/, // YYYY-MM-DD
                 "datetime": /^([0-2][0-9]{3})\-([0-1][0-9])\-([0-3][0-9])T([0-5][0-9])\:([0-5][0-9])\:([0-5][0-9])(Z|([\-\+]([0-1][0-9])\:00))$/,
                 "number": /^[-+]?\d*(?:[\.\,]\d+)?$/,
@@ -262,6 +262,16 @@ var fieldValidator = (function() {
         return o;
     }
 
+    function validateAbstractTimeType(el) {
+        var o = {
+                field: el,
+                errors: [],
+                isValid: true
+            };
+
+        return o;
+    }
+
     return {
         validate: function(html) {
             // get the fields object
@@ -276,6 +286,9 @@ var fieldValidator = (function() {
                     r.push(validateAbstractStringType(i));
                 } else if (type === "number") {
                     r.push(validateAbstractNumericType(i));
+                } else if (type === "date" || type === "datetime" || type === "time" || type === "week" || type === "month") {
+                    r.push(validateAbstractTimeType(i));
+                    console.log("date & time type validations aren't implemented yet");
                 }
             });
 
