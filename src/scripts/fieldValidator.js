@@ -92,7 +92,7 @@ var fieldValidator = (function() {
 
         fields.selects = getSelects(html);
         fields.textareas = getTextareas(html);
-        fields.inputs = removeButtons(getInputs(html));
+        fields.inputs = removeUnwantedFields(getInputs(html));
         fields.checkboxes = getCheckboxes(html);
         fields.radios = getRadios(html);
 
@@ -107,7 +107,7 @@ var fieldValidator = (function() {
      * @param a {Array} the array of elements to clean
      * @returns {Array} new Array, without the rejected button "types"
      */
-    function removeButtons(a) {
+    function removeUnwantedFields(a) {
         var buttons = ["submit", "reset", "file", "button"],
             i,
             j,
