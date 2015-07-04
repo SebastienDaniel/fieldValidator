@@ -25,12 +25,16 @@ describe("A url field", function() {
 
     it("should flag \"maxlength\" errors", function() {
         field.setAttribute("maxlength", "30");
+
+        // above maxlength
         field.value = "https://sebastiendaniel.ca/this-is-my-blog/its-a-long-link/";
         expect(v(field)).toEqual([{field: field, errors: ["maxlength"], isValid: false}]);
 
+        // exact maxlength
         field.value = "https://sebastiendaniel.ca/";
         expect(v(field)).toEqual([{field: field, errors: [], isValid: true}]);
 
+        // below maxlength
         field.value = "https://sebastie.ca/";
         expect(v(field)).toEqual([{field: field, errors: [], isValid: true}]);
     });
@@ -45,29 +49,24 @@ describe("A url field", function() {
         expect(v(field)).toEqual([{field: field, errors: [], isValid: true}]);
     });
 
-    /*
     it("should flag \"pattern\" errors", function() {
-        field.setAttribute("pattern", "^[a-z,A-Z]*$");
+        field.setAttribute("pattern", "^[\:\/\.a-z\-]*$");
 
-        field.value = "123sebas";
-        expect(v(field)).toEqual([{field: field, errors: ["pattern"], isValid: false}]);
-
-        field.value = "seb123as";
-        expect(v(field)).toEqual([{field: field, errors: ["pattern"], isValid: false}]);
-
-        field.value = "sebas123";
-        expect(v(field)).toEqual([{field: field, errors: ["pattern"], isValid: false}]);
-
-        field.value = "sebastien";
+        // no illegal characters
+        field.value = "http://sebweb.ca/my-blog";
         expect(v(field)).toEqual([{field: field, errors: [], isValid: true}]);
+
+        // illegal characters
+        field.value = "http://www.sebWEBb.ca";
+        expect(v(field)).toEqual([{field: field, errors: ["pattern"], isValid: false}]);
     });
-    */
 
     it("should not flag errors for invalid string-type validation attributes", function() {
         field.setAttribute("min", "6");
         field.setAttribute("max", "10");
         field.setAttribute("step", "3");
 
+        field.value = "http://sebweb.ca/my-blog";
         expect(v(field)).toEqual([{field: field, errors: [], isValid: true}]);
     });
 });
