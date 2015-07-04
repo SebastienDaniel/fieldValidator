@@ -6,6 +6,23 @@ describe("A url field", function() {
     field.setAttribute("type", "url");
 
     document.body.appendChild(field);
+    it("should accept all valid URL types", function() {
+        // FTP
+        field.value = "ftp://sebweb.ca/";
+        expect(v(field)).toEqual([{field: field, errors: [], isValid: true}]);
+
+        // HTTP
+        field.value = "http://www.sebweb.ca/";
+        expect(v(field)).toEqual([{field: field, errors: [], isValid: true}]);
+
+        // HTTPS
+        field.value = "https://www.sebweb.ca/";
+        expect(v(field)).toEqual([{field: field, errors: [], isValid: true}]);
+
+        // FILE
+        field.value = "file:///W:/materialModules";
+        expect(v(field)).toEqual([{field: field, errors: [], isValid: true}]);
+    });
 
     it("should flag \"minlength\" errors", function() {
         field.setAttribute("minlength", "20");
