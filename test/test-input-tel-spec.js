@@ -3,7 +3,7 @@ describe("A tel field (is just like a text field) it", function() {
     var field = document.createElement("input"),
         v = fieldValidator.validate;
 
-    field.setAttribute("type", "text");
+    field.setAttribute("type", "tel");
 
     document.body.appendChild(field);
 
