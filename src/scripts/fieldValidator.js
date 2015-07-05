@@ -264,11 +264,28 @@ var fieldValidator = (function() {
 
     function validateAbstractTimeType(el) {
         var o = {
-                field: el,
-                errors: [],
-                isValid: true
-            };
+            field: el,
+            errors: [],
+            isValid: true
+        };
 
+        return o;
+    }
+
+    function validateSelect(el) {
+        var o = {
+            field: el,
+            errors: [],
+            isValid: true
+        };
+
+        // if required flag all "emptyish" values
+        if (el.required) {
+            if (el.value === "" || el.value === null || el.value === "null" || el.value === undefined) {
+                o.errors = ["required"];
+                o.isValid = false;
+            }
+        }
         return o;
     }
 
@@ -278,7 +295,7 @@ var fieldValidator = (function() {
             var f = getFields(html),
                 r = [];
 
-            // validate fields
+            // validate inputs
             f.inputs.forEach(function(i) {
                 var type = i.getAttribute("type").toLowerCase();
 
@@ -292,11 +309,22 @@ var fieldValidator = (function() {
                 }
             });
 
+            // validate the "type" attribute of all fields
             r.forEach(function(report) {
                 if (!validateType(report.field)) {
                     report.errors.push("type");
                     report.isValid = false;
                 }
+            });
+
+            // validate textareas
+            f.textareas.forEach(function(t) {
+                r.push(validateAbstractStringType(t));
+            });
+
+            // validate selects
+            f.selects.forEach(function(s) {
+                r.push(validateSelect(s));
             });
 
             return r;
