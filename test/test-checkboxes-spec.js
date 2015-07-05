@@ -1,4 +1,4 @@
-describe("checkboxes", function() {
+describe("Checkboxes", function() {
     var group1 = [],
         group2 = [],
         container = document.createElement("div"),
@@ -59,7 +59,7 @@ describe("checkboxes", function() {
         ]);
     });
 
-    it("should flag \"required\" errors once per name group", function() {
+    it("should flag \"required\" errors, and only once per name group", function() {
         // inject required on group1[0]
         group1[0].setAttribute("required", "required");
         expect(v(container)).toEqual([
