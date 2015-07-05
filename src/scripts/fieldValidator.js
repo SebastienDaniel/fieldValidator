@@ -289,6 +289,72 @@ var fieldValidator = (function() {
         return o;
     }
 
+    function validateCheckboxes(checkboxes) {
+        var isRequired = false,
+            isChecked = false,
+            cL = checkboxes.length,
+            validations = [],
+            i = 0;
+
+        // is at least one checkbox required in the group
+        while (i < cL) {
+            if (checkboxes[i].required) {
+                isRequired = true;
+                i = cL;
+            }
+            i++
+        }
+
+        // is at least one checkbox checked in the group
+        i = 0;
+        while (i < cL) {
+            if (checkboxes[i].checked) {
+                isChecked = true;
+                i = cL;
+            }
+            i++
+        }
+
+        return {
+            field: checkboxes,
+            errors: isRequired && !isChecked ? ["required"] : [],
+            isValid: isRequired ? isChecked : true
+        };
+    }
+
+    function validateRadios(radios) {
+        var isRequired = false,
+            isChecked = false,
+            rL = radios.length,
+            validations = [],
+            i = 0;
+
+        // is at least one radio required in the group
+        while (i < rL) {
+            if (radios[i].required) {
+                isRequired = true;
+                i = rL;
+            }
+            i++
+        }
+
+        // is at least one radio checked in the group
+        i = 0;
+        while (i < rL) {
+            if (radios[i].checked) {
+                isChecked = true;
+                i = rL;
+            }
+            i++
+        }
+
+        return {
+            field: radios,
+            errors: isRequired && !isChecked ? ["required"] : [],
+            isValid: isRequired ? isChecked : true
+        };
+    }
+
     return {
         validate: function(html) {
             // get the fields object
@@ -309,7 +375,7 @@ var fieldValidator = (function() {
                 }
             });
 
-            // validate the "type" attribute of all fields
+            // validate the "type" attribute of all input fields
             r.forEach(function(report) {
                 if (!validateType(report.field)) {
                     report.errors.push("type");
@@ -325,6 +391,16 @@ var fieldValidator = (function() {
             // validate selects
             f.selects.forEach(function(s) {
                 r.push(validateSelect(s));
+            });
+
+            // validate checkboxes
+            Object.keys(f.checkboxes).forEach(function(key) {
+                r.push(validateCheckboxes(f.checkboxes[key]))
+            });
+
+            // validate radios
+            Object.keys(f.radios).forEach(function(key) {
+                r.push(validateRadios(f.radios[key]))
             });
 
             return r;
