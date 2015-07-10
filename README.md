@@ -78,8 +78,8 @@ You are then free to handle these errors as you see fit.
 }());
 ```
 
-#### Possible results
-##### Perfect use-case (*no errors*)
+#### Possible results:
+#### Perfect use-case (*no errors*)
 ```js
 [
     {
@@ -100,7 +100,7 @@ You are then free to handle these errors as you see fit.
 ]   
 ```
 
-##### User forgot to fill out the "fullname" field and entered an invalid email in the "email" field
+### User forgot to fill out the "fullname" field and entered an invalid email in the "email" field
 ```js
 [
     {
@@ -120,3 +120,7 @@ You are then free to handle these errors as you see fit.
     }
 ]   
 ```
+
+## Change log
+- **2015-07-10** (v1.1.0) - added support for `type="date"` and `type="month"` The date format must always be YYYY-mm-dd.
+- **2015-07-09** (v1.0.6) - first publication on NPM, few minor adjustments to package.
