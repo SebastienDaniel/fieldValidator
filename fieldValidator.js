@@ -411,7 +411,3 @@ var fieldValidator = (function() {
         }
     };
 }());
-
-module.exports = {
-    validate: fieldValidator.validate
-};

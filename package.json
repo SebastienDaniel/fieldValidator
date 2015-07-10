@@ -1,7 +1,7 @@
 {
     "name": "fieldvalidator",
     "description": "Use HTML5 field element attributes to validate field input dynamically. Allows for flexible validation management without changing the DOM",
-    "version": "1.0.1",
+    "version": "1.0.5",
     "homepage": "https://github.com/SebastienDaniel/fieldValidator",
     "keywords": [
         "input",
@@ -27,14 +27,14 @@
         "url": "https://github.com/SebastienDaniel/fieldValidator/license"
     },
     "files": [
-        "build/js/fieldValidator.min.js",
+        "fieldValidator.min.js",
         "test",
         "license"
     ],
     "scripts": {
         "test": "grunt jasmine"
     },
-    "main": "src/scripts/fieldValidator.js",
+    "main": "fieldValidator.min.js",
     "devDependencies": {
         "grunt": "^0.4.5",
         "grunt-contrib-clean": "^0.6.0",
