@@ -18,13 +18,7 @@
   //"unused": true,
   "worker": true,
   "globals": {
-    "ajax": true,
-    "ERP": true,
-    "ct": true,
-    "_": true,
-    "Mustache": true,
-    "GLOBALLOOP": true,
-    "modalBox": true,
-    "l18n": true
-  }
+    "module": true
+  },
+  "environment": "node"
 }

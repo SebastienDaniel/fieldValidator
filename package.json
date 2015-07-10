@@ -1,40 +1,51 @@
 {
-  "name": "fieldvalidator",
-  "description": "Use HTML5 field element attributes to validate field input dynamically. Allows for flexible validation management all the while keeping your markup valid",
-  "keywords": [
-    "input",
-    "field",
-    "HTML5",
-    "forms",
-    "validation"
-  ],
-  "author": {
-    "name": "Sebastien Daniel",
-    "email": "info@sebastiendaniel.ca",
-    "url": "http://www.sebastiendaniel.ca/"
-  },
-  "bugs": {
-    "url": "https://github.com/SebastienDaniel/fieldValidator/issues",
-    "email": "info@sebastiendaniel.ca"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/SebastienDaniel/fieldValidator.git"
-  },
-  "version": "1.0.0",
-  "license": "MIT",
-  "main": "src/scripts/fieldValidator.js",
-  "devDependencies": {
-    "grunt": "^0.4.5",
-    "grunt-contrib-clean": "^0.6.0",
-    "grunt-contrib-jasmine": "^0.8.2",
-    "grunt-contrib-jshint": "^0.10.0",
-    "grunt-contrib-uglify": "^0.8.0",
-    "grunt-githooks": "^0.3.1",
-    "grunt-jscs": "^1.5.0",
-    "grunt-jsdoc": "^0.6.2",
-    "grunt-remove-logging": "^0.2.0",
-    "sync-exec": "^0.5.0"
-  },
-  "private": false
+    "name": "fieldvalidator",
+    "description": "Use HTML5 field element attributes to validate field input dynamically. Allows for flexible validation management without changing the DOM",
+    "version": "1.0.1",
+    "homepage": "https://github.com/SebastienDaniel/fieldValidator",
+    "keywords": [
+        "input",
+        "field",
+        "HTML5",
+        "forms",
+        "validation"
+    ],
+    "author": {
+        "name": "Sebastien Daniel",
+        "email": "info@sebastiendaniel.ca",
+        "url": "http://www.sebastiendaniel.ca/"
+    },
+    "bugs": {
+        "url": "https://github.com/SebastienDaniel/fieldValidator/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/SebastienDaniel/fieldValidator.git"
+    },
+    "license": {
+        "type": "MIT",
+        "url": "https://github.com/SebastienDaniel/fieldValidator/license"
+    },
+    "files": [
+        "build/js/fieldValidator.min.js",
+        "test",
+        "license"
+    ],
+    "scripts": {
+        "test": "grunt jasmine"
+    },
+    "main": "src/scripts/fieldValidator.js",
+    "devDependencies": {
+        "grunt": "^0.4.5",
+        "grunt-contrib-clean": "^0.6.0",
+        "grunt-contrib-jasmine": "^0.8.2",
+        "grunt-contrib-jshint": "^0.10.0",
+        "grunt-contrib-uglify": "^0.8.0",
+        "grunt-githooks": "^0.3.1",
+        "grunt-jscs": "^1.5.0",
+        "grunt-jsdoc": "^0.6.2",
+        "grunt-remove-logging": "^0.2.0",
+        "sync-exec": "^0.5.0"
+    },
+    "private": false
 }

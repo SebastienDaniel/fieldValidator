@@ -5,7 +5,7 @@ module.exports = function(grunt) {
         pkg: grunt.file.readJSON("package.json"),
         removelogging: {
             build: {
-                src: "src/scripts/fieldValidator.js"
+                src: "fieldValidator.js"
             }
         },
         clean: ["build/**"],
@@ -19,19 +19,19 @@ module.exports = function(grunt) {
                     mangleProperties: true,
                     reserveDOMProperties: true
                 },
-                src: "src/scripts/fieldValidator.js",
-                dest: "build/js/fieldValidator.min.js"
+                src: "fieldValidator.js",
+                dest: "fieldValidator.min.js"
             }
         },
         jshint: {
-            src: ["src/scripts/**/*.js"]
+            src: ["fieldValidator.js"]
         },
         jscs: {
-            src: "src/scripts/**/*.js"
+            src: "fieldValidator.js"
         },
         jsdoc: {
             dev: {
-                src: ['src/scripts/**/*.js'],
+                src: ['fieldValidator.js'],
                 options: {
                     destination: 'doc',
                     configure : "node_modules/grunt-jsdoc/node_modules/ink-docstrap/template/jsdoc.conf.json"
@@ -39,7 +39,7 @@ module.exports = function(grunt) {
             }
         },
         jasmine: {
-            src: ["src/scripts/**/*.js"],
+            src: ["fieldValidator.js"],
             options: {
                 specs: ["test/*spec.js"]
             }
