@@ -143,6 +143,8 @@ var fieldValidator = (function() {
         var typePatterns = {
                 "email": /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
                 "date": /(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))$/, // YYYY-MM-DD
+                "week": /(?:19|20)[0-9]{2}-W(?:0[1-9]|[1-4][0-9]|5[0-2])$/,
+                "month": /(?:19|20)[0-9]{2}-(?:0[1-9]|1[0-2])$/,
                 "datetime": /^([0-2][0-9]{3})\-([0-1][0-9])\-([0-3][0-9])T([0-5][0-9])\:([0-5][0-9])\:([0-5][0-9])(Z|([\-\+]([0-1][0-9])\:00))$/,
                 "number": /^[-+]?\d*(?:[\.\,]\d+)?$/,
                 "url": /^(https?|ftp|file|ssh):\/\/([-;:&=\+\$,\w]+@{1})?([-A-Za-z0-9\.]+)+:?(\d+)?((\/[-\+~%\/\.\w]+)?\??([-\+=&;%@\.\w]+)?#?([\w]+)?)?/,
@@ -214,6 +216,77 @@ var fieldValidator = (function() {
                         decimals = step.split(".").pop().length;
 
                     return (el.value * Math.pow(10, decimals)) % (step * Math.pow(10, decimals)) === 0;
+                },
+                required: function testRequired(el) {
+                    return el.value.length > 0;
+                }
+            },
+            keys = Object.keys(attributes),
+            kL = keys.length,
+            o = {
+                field: el,
+                errors: [],
+                isValid: true
+            },
+            i;
+
+        if (el.validity) {
+            if (el.validity.rangeOverflow) {
+                o.isValid = false;
+                o.errors.push("max");
+            }
+
+            if (el.validity.rangeUnderflow) {
+                o.isValid = false;
+                o.errors.push("min");
+            }
+
+            if (el.validity.stepMismatch) {
+                o.isValid = false;
+                o.errors.push("step");
+            }
+
+            if (el.validity.valueMissing) {
+                o.isValid = false;
+                o.errors.push("required");
+            }
+        } else {
+            for (i = 0; i < kL; i++) {
+                if (el.getAttribute(keys[i])) {
+                    if (!attributes[keys[i]](el)) {
+                        o.isValid = false;
+                        o.errors.push(keys[i]);
+                    }
+                }
+            }
+        }
+
+        return o;
+    }
+
+    function validateAbstractDateType(el) {
+        var attributes = {
+                max: function testMax(el) {
+                    return Date.parse(el.value) <= Date.parse(el.getAttribute("max"));
+                },
+                min: function testMin(el) {
+                    return Date.parse(el.value) >= Date.parse(el.getAttribute("min"));
+                },
+                step: function testStep(el) {
+                    var step = parseInt(el.getAttribute("step"), 10);
+
+                    // minimum has to be set, otherwise the starting date for step is random
+                    if (el.getAttribute("min")) {
+                        // step varies based on date type
+                        if (el.getAttribute("type").toLowerCase() === "date") {
+                            step *= (1000 * 60 * 60 * 24); //step is per day, minimum
+                        } else if (el.getAttribute("type").toLowerCase() === "month") {
+                            // TODO: this is an imprecise evaluation of the step value of a month
+                            step *= (1000 * 60 * 60 * 24 * 30); //step is per month, minimum
+                        }
+
+                        return (Date.parse(el.value) - Date.parse(el.getAttribute("min"))) % step === 0;
+                    }
                 },
                 required: function testRequired(el) {
                     return el.value.length > 0;
@@ -370,11 +443,13 @@ var fieldValidator = (function() {
             f.inputs.forEach(function(i) {
                 var type = i.getAttribute("type").toLowerCase();
 
-                if (type === "text" || type === "email" || type === "url" || type === "tel") {
+                if (type === "text" || type === "email" || type === "url" || type === "tel" || type === "week") {
                     r.push(validateAbstractStringType(i));
                 } else if (type === "number") {
                     r.push(validateAbstractNumericType(i));
-                } else if (type === "date" || type === "datetime" || type === "time" || type === "week" || type === "month") {
+                } else if (type === "date" || type === "month") {
+                    r.push(validateAbstractDateType(i));
+                } else if (type === "datetime" || type === "time") {
                     r.push(validateAbstractTimeType(i));
                 }
             });
