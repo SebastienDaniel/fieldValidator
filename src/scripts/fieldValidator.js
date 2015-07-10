@@ -269,6 +269,11 @@ var fieldValidator = (function() {
             isValid: true
         };
 
+        if (el.value === "" || !el.value) {
+            o.errors.push("required");
+            o.isValid = false;
+        }
+
         return o;
     }
 
@@ -302,7 +307,7 @@ var fieldValidator = (function() {
                 isRequired = true;
                 i = cL;
             }
-            i++
+            i++;
         }
 
         // is at least one checkbox checked in the group
@@ -312,7 +317,7 @@ var fieldValidator = (function() {
                 isChecked = true;
                 i = cL;
             }
-            i++
+            i++;
         }
 
         return {
@@ -335,7 +340,7 @@ var fieldValidator = (function() {
                 isRequired = true;
                 i = rL;
             }
-            i++
+            i++;
         }
 
         // is at least one radio checked in the group
@@ -345,7 +350,7 @@ var fieldValidator = (function() {
                 isChecked = true;
                 i = rL;
             }
-            i++
+            i++;
         }
 
         return {
@@ -371,7 +376,6 @@ var fieldValidator = (function() {
                     r.push(validateAbstractNumericType(i));
                 } else if (type === "date" || type === "datetime" || type === "time" || type === "week" || type === "month") {
                     r.push(validateAbstractTimeType(i));
-                    console.log("date & time type validations aren't implemented yet");
                 }
             });
 
@@ -395,15 +399,19 @@ var fieldValidator = (function() {
 
             // validate checkboxes
             Object.keys(f.checkboxes).forEach(function(key) {
-                r.push(validateCheckboxes(f.checkboxes[key]))
+                r.push(validateCheckboxes(f.checkboxes[key]));
             });
 
             // validate radios
             Object.keys(f.radios).forEach(function(key) {
-                r.push(validateRadios(f.radios[key]))
+                r.push(validateRadios(f.radios[key]));
             });
 
             return r;
         }
     };
 }());
+
+module.exports = {
+    validate: fieldValidator.validate
+};

@@ -1,15 +1,29 @@
 {
-  "name": "fieldValidator",
-  "description": "uses HTML5 field element attributes to validate field input. Allows to have more flexible validation all the while keeping your markup valid",
+  "name": "fieldvalidator",
+  "description": "Use HTML5 field element attributes to validate field input dynamically. Allows for flexible validation management all the while keeping your markup valid",
+  "keywords": [
+    "input",
+    "field",
+    "HTML5",
+    "forms",
+    "validation"
+  ],
   "author": {
     "name": "Sebastien Daniel",
+    "email": "info@sebastiendaniel.ca",
+    "url": "http://www.sebastiendaniel.ca/"
+  },
+  "bugs": {
+    "url": "https://github.com/SebastienDaniel/fieldValidator/issues",
     "email": "info@sebastiendaniel.ca"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/SebastienDaniel/fieldValidator.git"
   },
-  "version": "0.1.0",
+  "version": "1.0.0",
+  "license": "MIT",
+  "main": "src/scripts/fieldValidator.js",
   "devDependencies": {
     "grunt": "^0.4.5",
     "grunt-contrib-clean": "^0.6.0",
@@ -22,8 +36,5 @@
     "grunt-remove-logging": "^0.2.0",
     "sync-exec": "^0.5.0"
   },
-  "private": false,
-  "scripts": {
-    "postinstall": "grunt githooks"
-  }
+  "private": false
 }
