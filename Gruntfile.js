@@ -33,8 +33,7 @@ module.exports = function(grunt) {
             dev: {
                 src: ['fieldValidator.js'],
                 options: {
-                    destination: 'doc',
-                    configure : "node_modules/grunt-jsdoc/node_modules/ink-docstrap/template/jsdoc.conf.json"
+                    destination: 'doc/'
                 }
             }
         },
