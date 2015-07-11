@@ -1,10 +1,18 @@
 /**
  * @namespace fieldValidator
+ * @summary analyzes HTML field elements contents and returns an array of validation objects
  */
 var fieldValidator = (function() {
     "use strict";
 
-    // return an array of textareas
+    /**
+     * @memberof fieldValidator
+     * @private
+     * @summary gets all textarea elements within the source element.
+     *
+     * @param source {Object} - HTML object originally provided in the public validate function
+     * @returns {Array} - Array of references to all textarea elements found within the source Object (or the source Object itself)
+     */
     function getTextareas(source) {
         if (source.tagName.toLowerCase() === "textarea") {
             return [source];
@@ -13,7 +21,14 @@ var fieldValidator = (function() {
         }
     }
 
-    // return an array of selects
+    /**
+     * @memberof fieldValidator
+     * @private
+     * @summary gets all select elements within the source element
+     *
+     * @param source {Object} - HTML object originally provided in the public validate function
+     * @returns {Array} - Array of references to all select elements found within the source Object (or the source Object itself)
+     */
     function getSelects(source) {
         if (source.tagName.toLowerCase() === "select") {
             return [source];
@@ -22,25 +37,46 @@ var fieldValidator = (function() {
         }
     }
 
-    // return an array of non checkbox or radio inputs.
+    /**
+     * @memberof fieldValidator
+     * @private
+     * @summary gets all input elements within the source element that are not of type radio or checkbox
+     *
+     * @param source {Object} - HTML object originally provided in the public validate function
+     * @returns {Array} - Array of references to all input elements found within the source Object (or the source Object itself)
+     */
     function getInputs(source) {
+        // return source object if it is an input (and not of type radio or checkbox)
         if (source.tagName.toLowerCase() === "input" &&
             source.getAttribute("type").toLowerCase() !== "radio" &&
             source.getAttribute("type").toLowerCase() !== "checkbox") {
             return [source];
         } else {
+            // return an array of all inputs found within the source object, filter them if they are of type radio or checkbox
             return Array.prototype.slice.call(source.getElementsByTagName("input")).filter(function(i) {
                 return i.getAttribute("type").toLowerCase() !== "checkbox" && i.getAttribute("type").toLowerCase() !== "radio";
             });
         }
     }
 
-    // return an object of checkbox arrays, separated by the "name" property
+    /**
+     * @memberof fieldValidator
+     * @private
+     * @summary gets all input (checkbox) elements within the source element
+     *
+     * @param source {Object} - HTML object originally provided in the public validate function
+     * @returns {Object} - Object of arrays, each unique field "name" attribute creates a new array of
+     * checkbox references to all input(checkbox) elements found within the source Object with the given name attribute value
+     * (or the source Object itself)
+     */
     function getCheckboxes(source) {
         var o = {};
+        // if the source object is a checkbox, add it to the return object as name:[reference] pair
         if (source.tagName.toLowerCase() === "input" && source.getAttribute("type").toLowerCase() === "checkbox") {
             o[source.getAttribute("name").toLowerCase()] = [source];
         } else {
+            // get all input fields, filter them if they are not type checkbox
+            // for each checkbox found, build a "name":[field] pairing in the returned object
             Array.prototype.slice.call(source.getElementsByTagName("input")).filter(function(i) {
                 return i.getAttribute("type").toLowerCase() === "checkbox";
             }).forEach(function(c) {
@@ -57,7 +93,16 @@ var fieldValidator = (function() {
         return o;
     }
 
-    // return an object of radio arrays, separated by the "name" property
+    /**
+     * @memberof fieldValidator
+     * @private
+     * @summary gets all input (radio) elements within the source element
+     *
+     * @param source {Object} - HTML object originally provided in the public validate function
+     * @returns {Object} - Object of arrays, each unique field "name" attribute creates a new array of
+     * radio references to all input(radio) elements found within the source Object with the given name attribute value
+     * (or the source Object itself)
+     */
     function getRadios(source) {
         var o = {};
         if (source.tagName.toLowerCase() === "input" && source.getAttribute("type").toLowerCase() === "radio") {
@@ -83,9 +128,9 @@ var fieldValidator = (function() {
      * @memberof fieldValidator
      * @private
      *
-     * @summary scans through the provided HTML object an retrieves all supportedElements
-     * @param html {Object} HTML element to scan (if it is a supportedElement, it will be the only element scanned)
-     * @returns {Object} Object of arrays of all supportedElements extracted from html
+     * @summary scans through the provided HTML object and retrieves all field elements
+     * @param html {Object} HTML element to scan for each type
+     * @returns {Object} Object of arrays of all fields extracted from html
      */
     function getFields(html) {
         var fields = {};
@@ -103,9 +148,9 @@ var fieldValidator = (function() {
      * @memberof fieldValidator
      * @private
      *
-     * @summary removes all "button" types, since they do not capture user input (data)
+     * @summary removes all unwanted types (submit, reset, file, button), since they do not capture user input (data)
      * @param a {Array} the array of elements to clean
-     * @returns {Array} new Array, without the rejected button "types"
+     * @returns {Array} new Array, without the rejected "types"
      */
     function removeUnwantedFields(a) {
         var buttons = ["submit", "reset", "file", "button"],
@@ -139,6 +184,14 @@ var fieldValidator = (function() {
         return b;
     }
 
+    /**
+     * @memberof fieldValidator
+     * @private
+     * @summary validates input elements against their "type" attribute. Uses integrated valdiity object if present in browser.
+     *
+     * @param el {Object} - HTML input element
+     * @returns {Boolean} - result of the elements type validation based on a type regex pattern
+     */
     function validateType(el) {
         // patterns provided by ZURB foundation abide https://github.com/zurb/foundation/blob/master/js/foundation/foundation.abide.js
         var typePatterns = {
@@ -155,6 +208,7 @@ var fieldValidator = (function() {
             type = el.getAttribute("type").toLowerCase(),
             result = true;
 
+        // if browser has the validity object, us its properties to validate type
         if (el.validity) {
             result = !el.validity.badInput && !el.validity.typeMismatch;
         } else if (typePatterns[type]) {
@@ -164,6 +218,14 @@ var fieldValidator = (function() {
         return result;
     }
 
+    /**
+     * @memberof fieldValidator
+     * @private
+     * @summary makes generic validations for string-type input fields
+     *
+     * @param el {Object} HTML input or textarea element
+     * @returns {Object} validation object
+     */
     function validateAbstractStringType(el) {
         var attributes = {
                 maxlength: function testMaxlength(el) {
@@ -204,6 +266,14 @@ var fieldValidator = (function() {
         return o;
     }
 
+    /**
+     * @memberof fieldValidator
+     * @private
+     * @summary makes generic validations for numeric-type input fields
+     *
+     * @param el {Object} HTML input element
+     * @returns {Object} validation object
+     */
     function validateAbstractNumericType(el) {
         var attributes = {
                 max: function testMax(el) {
@@ -265,6 +335,14 @@ var fieldValidator = (function() {
         return o;
     }
 
+    /**
+     * @memberof fieldValidator
+     * @private
+     * @summary makes generic validations for date-type input fields
+     *
+     * @param el {Object} HTML input
+     * @returns {Object} validation object
+     */
     function validateAbstractDateType(el) {
         var attributes = {
                 max: function testMax(el) {
@@ -351,6 +429,14 @@ var fieldValidator = (function() {
         return o;
     }
 
+    /**
+     * @memberof fieldValidator
+     * @private
+     * @summary makes a custom required validation on a select element
+     *
+     * @param el {Object} HTML select element
+     * @returns {Object} validation object
+     */
     function validateSelect(el) {
         var o = {
             field: el,
@@ -361,18 +447,25 @@ var fieldValidator = (function() {
         // if required flag all "emptyish" values
         if (el.required) {
             if (el.value === "" || el.value === null || el.value === "null" || el.value === undefined) {
-                o.errors = ["required"];
+                o.errors.push("required");
                 o.isValid = false;
             }
         }
         return o;
     }
 
+    /**
+     * @memberof fieldValidator
+     * @private
+     * @summary makes custom "required" validations for a group of checkboxes
+     *
+     * @param checkboxes {Object} HTML input (checkbox) element
+     * @returns {Object} validation object
+     */
     function validateCheckboxes(checkboxes) {
         var isRequired = false,
             isChecked = false,
             cL = checkboxes.length,
-            validations = [],
             i = 0;
 
         // is at least one checkbox required in the group
@@ -385,13 +478,15 @@ var fieldValidator = (function() {
         }
 
         // is at least one checkbox checked in the group
-        i = 0;
-        while (i < cL) {
-            if (checkboxes[i].checked) {
-                isChecked = true;
-                i = cL;
+        if (isRequired) {
+            i = 0;
+            while (i < cL) {
+                if (checkboxes[i].checked) {
+                    isChecked = true;
+                    i = cL;
+                }
+                i++;
             }
-            i++;
         }
 
         return {
@@ -401,11 +496,18 @@ var fieldValidator = (function() {
         };
     }
 
+    /**
+     * @memberof fieldValidator
+     * @private
+     * @summary makes custom required validation for input (radio) fields
+     *
+     * @param el {Object} HTML input (radio) element
+     * @returns {Object} validation object
+     */
     function validateRadios(radios) {
         var isRequired = false,
             isChecked = false,
             rL = radios.length,
-            validations = [],
             i = 0;
 
         // is at least one radio required in the group
@@ -418,13 +520,15 @@ var fieldValidator = (function() {
         }
 
         // is at least one radio checked in the group
-        i = 0;
-        while (i < rL) {
-            if (radios[i].checked) {
-                isChecked = true;
-                i = rL;
+        if (isRequired) {
+            i = 0;
+            while (i < rL) {
+                if (radios[i].checked) {
+                    isChecked = true;
+                    i = rL;
+                }
+                i++;
             }
-            i++;
         }
 
         return {
@@ -435,25 +539,37 @@ var fieldValidator = (function() {
     }
 
     return {
+        /**
+         * @memberof fieldValidator
+         * @summary will grab all field elements within the provided HTML object,
+         * or analyze the HTML object itself if it is a form field
+         *
+         * @param html {Object} - HTML object to validate
+         * @public
+         * @returns {Array} of validation objects
+         */
         validate: function(html) {
             // get the fields object
             var f = getFields(html),
-                r = [];
+                r = [],
+                tagName = html.tagName.toLowerCase();
 
             // validate inputs
-            f.inputs.forEach(function(i) {
-                var type = i.getAttribute("type").toLowerCase();
+            if (f.inputs.length > 0) {
+                f.inputs.forEach(function(i) {
+                    var type = i.getAttribute("type").toLowerCase();
 
-                if (type === "text" || type === "email" || type === "url" || type === "tel" || type === "week") {
-                    r.push(validateAbstractStringType(i));
-                } else if (type === "number") {
-                    r.push(validateAbstractNumericType(i));
-                } else if (type === "date" || type === "month") {
-                    r.push(validateAbstractDateType(i));
-                } else if (type === "datetime" || type === "time") {
-                    r.push(validateAbstractTimeType(i));
-                }
-            });
+                    if (type === "text" || type === "email" || type === "url" || type === "tel" || type === "week") {
+                        r.push(validateAbstractStringType(i));
+                    } else if (type === "number") {
+                        r.push(validateAbstractNumericType(i));
+                    } else if (type === "date" || type === "month") {
+                        r.push(validateAbstractDateType(i));
+                    } else if (type === "datetime" || type === "time") {
+                        r.push(validateAbstractTimeType(i));
+                    }
+                });
+            }
 
             // validate the "type" attribute of all input fields
             r.forEach(function(report) {
@@ -464,31 +580,39 @@ var fieldValidator = (function() {
             });
 
             // validate textareas
-            f.textareas.forEach(function(t) {
-                r.push(validateAbstractStringType(t));
-            });
+            if (f.textareas.length > 0) {
+                f.textareas.forEach(function(t) {
+                    r.push(validateAbstractStringType(t));
+                });
+            }
 
             // validate selects
-            f.selects.forEach(function(s) {
-                r.push(validateSelect(s));
-            });
+            if (f.selects.length > 0) {
+                f.selects.forEach(function(s) {
+                    r.push(validateSelect(s));
+                });
+            }
 
             // validate checkboxes
-            Object.keys(f.checkboxes).forEach(function(key) {
-                r.push(validateCheckboxes(f.checkboxes[key]));
-            });
+            if (f.checkboxes) {
+                Object.keys(f.checkboxes).forEach(function(key) {
+                    r.push(validateCheckboxes(f.checkboxes[key]));
+                });
+            }
 
             // validate radios
-            Object.keys(f.radios).forEach(function(key) {
-                r.push(validateRadios(f.radios[key]));
-            });
+            if (f.radios) {
+                Object.keys(f.radios).forEach(function(key) {
+                    r.push(validateRadios(f.radios[key]));
+                });
+            }
 
             return r;
         }
     };
 }());
 
-// adding commonJS exports
+// adding commonJS exports if module.exports is part of the env. otherwise expose as a global module.
 if (typeof module !== undefined && typeof module.exports !== undefined) {
     module.exports = fieldValidator;
 } else {
