@@ -25,18 +25,21 @@ From that object it will grab all form fields (*input, textarea, select*) and va
 
 - min
 - max
-- minlength
+- minlength (*technically not in the HTML5 spec, but we found it common enough to add it*)
 - maxlength
 - pattern
 - required
 - step
-- type (*doesn't currently validate date and time types*)
+- type (*doesn't currently validate datetime and time types*)
 
 It will return an array of validation objects, each object has 3 properties:
 
 - **field**: a reference to the HTML field that was validated. This will be an array of fields in the case of checkboxes & radios.
 - **errors**: an array of error strings to signify what caused the error (*it will return the name of the faulty attribute's name*)
 - **isValid**: boolean, representing whether the field passed validation or not.
+
+If the browser has the "validity" object for fields, the module will use the values available there instead of making
+it's own validations (*except for minlength validation*).
 
 You are then free to handle these errors as you see fit.
 
@@ -122,5 +125,7 @@ You are then free to handle these errors as you see fit.
 ```
 
 ## Change log
+- **2015-07-11** (v1.1.2) - improved code documentation (see github repo). Reduced some unnecessary looping.
+- **2015-07-10** (v1.1.1) - re-added the module.exports or window exposing feature
 - **2015-07-10** (v1.1.0) - added support for `type="date"` and `type="month"` The date format must always be YYYY-mm-dd.
 - **2015-07-09** (v1.0.6) - first publication on NPM, few minor adjustments to package.
