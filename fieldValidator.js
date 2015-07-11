@@ -140,6 +140,7 @@ var fieldValidator = (function() {
     }
 
     function validateType(el) {
+        // patterns provided by ZURB foundation abide https://github.com/zurb/foundation/blob/master/js/foundation/foundation.abide.js
         var typePatterns = {
                 "email": /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
                 "date": /(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))$/, // YYYY-MM-DD
@@ -486,3 +487,10 @@ var fieldValidator = (function() {
         }
     };
 }());
+
+// adding commonJS exports
+if (typeof module !== undefined && typeof module.exports !== undefined) {
+    module.exports = fieldValidator;
+} else {
+    window.fieldValidator = fieldValidator;
+}
