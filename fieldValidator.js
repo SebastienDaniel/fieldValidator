@@ -202,7 +202,7 @@ var fieldValidator = (function() {
                 "datetime": /^([0-2][0-9]{3})\-([0-1][0-9])\-([0-3][0-9])T([0-5][0-9])\:([0-5][0-9])\:([0-5][0-9])(Z|([\-\+]([0-1][0-9])\:00))$/,
                 "number": /^[-+]?\d*(?:[\.\,]\d+)?$/,
                 "url": /^(https?|ftp|file|ssh):\/\/([-;:&=\+\$,\w]+@{1})?([-A-Za-z0-9\.]+)+:?(\d+)?((\/[-\+~%\/\.\w]+)?\??([-\+=&;%@\.\w]+)?#?([\w]+)?)?/,
-                "time": /^(0[0-9]|1[0-9]|2[0-3])(:[0-5][0-9]){2}$/, // HH:MM:SS
+                "time": /^(0[0-9]|1[0-9]|2[0-3])(:[0-5][0-9]){2}(\.[0-9]*)$/, // HH:MM:SS.ddd...(n)d
                 "color": /^#?([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/ // #FFF #FFFFFF
             },
             type = el.getAttribute("type").toLowerCase(),
@@ -415,6 +415,7 @@ var fieldValidator = (function() {
     }
 
     function validateAbstractTimeType(el) {
+        // HH:MM:SS.XXXXXXXXXXXX
         var o = {
             field: el,
             errors: [],
