@@ -74,6 +74,30 @@ describe("A number field", function() {
 
         field.value = "0.0003";
         expect(v(field)).toEqual([{field: field, errors: ["step"], isValid: false}]);
+
+        // should accept step "any"
+        field.setAttribute("step", "any");
+        field.value = "0.004";
+        expect(v(field)).toEqual([{field: field, errors: [], isValid: true}]);
+
+        field.value = "0.5";
+        expect(v(field)).toEqual([{field: field, errors: [], isValid: true}]);
+
+        field.value = "0.0003";
+        expect(v(field)).toEqual([{field: field, errors: [], isValid: true}]);
+
+        field.value = "1";
+        expect(v(field)).toEqual([{field: field, errors: [], isValid: true}]);
+
+        field.value = "3";
+        expect(v(field)).toEqual([{field: field, errors: [], isValid: true}]);
+
+        field.value = "2";
+        expect(v(field)).toEqual([{field: field, errors: [], isValid: true}]);
+
+        field.value = "4";
+        expect(v(field)).toEqual([{field: field, errors: [], isValid: true}]);
+
     });
 
 
