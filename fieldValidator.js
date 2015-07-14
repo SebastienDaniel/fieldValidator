@@ -396,24 +396,27 @@ var fieldValidator = (function() {
     function validateAbstractTimeType(el) {
         var attributes = {
                 max: function testMax(el) {
-                    return parseFloat(el.value.replace(":", "")) <= parseFloat(el.getAttribute("max").replace(":", ""));
+                    return parseFloat(el.value.replace(/:/g, "")) <= parseFloat(el.getAttribute("max").replace(/:/g, ""));
                 },
                 min: function testMin(el) {
-                    return parseFloat(el.value.replace(":", "")) >= parseFloat(el.getAttribute("min").replace(":", ""));
+                    return parseFloat(el.value.replace(/:/g, "")) >= parseFloat(el.getAttribute("min").replace(/:/g, ""));
                 },
                 step: function testStep(el) {
-                    var time = el.value.split(/\.:/).map(function(v) {
-                            return parseInt(v, 10);
-                        }),
-                        step = el.getAttribute("step"),
-                        timeInSeconds;
+                    var step = el.getAttribute("step"),
+                        min = el.getAttribute("min"),
+                        timeInSeconds = function(time) {
+                            time = time.split(/:|\./).map(function(v) {
+                                return parseInt(v, 10);
+                            });
+
+                            return time[0] * 3600 + time[1] * 60 + time[2] || 0;
+                        };
 
                     if (step === "any") {
                         return true;
-                    } else {
+                    } else if (min !== null) {
                         step = parseInt(step, 10);
-                        timeInSeconds = time[0] * (60 * 60) + time[1] * 60 + time[2];
-                        return timeInSeconds % step;
+                        return (timeInSeconds(el.value) - timeInSeconds(min)) % step === 0;
                     }
                 },
                 required: function testRequired(el) {
@@ -600,6 +603,9 @@ var fieldValidator = (function() {
             // get the fields object
             var f = getFields(html),
                 r = [];
+
+            // set final browser validation setting, true if and only if the browser also supports it
+            useBrowserValidation = typeof HTMLFormElement.prototype.checkValidity === "function" && useBrowserValidation;
 
             // validate inputs
             if (f.inputs.length > 0) {
