@@ -284,9 +284,13 @@ var fieldValidator = (function() {
                 },
                 step: function testStep(el) {
                     var step = el.getAttribute("step"),
+                        decimals;
+                    if (step === "any") {
+                        return true;
+                    } else {
                         decimals = step.split(".").pop().length;
-
-                    return (el.value * Math.pow(10, decimals)) % (step * Math.pow(10, decimals)) === 0;
+                        return (el.value * Math.pow(10, decimals)) % (step * Math.pow(10, decimals)) === 0;
+                    }
                 },
                 required: function testRequired(el) {
                     return el.value.length > 0;
@@ -301,33 +305,11 @@ var fieldValidator = (function() {
             },
             i;
 
-        if (el.validity) {
-            if (el.validity.rangeOverflow) {
-                o.isValid = false;
-                o.errors.push("max");
-            }
-
-            if (el.validity.rangeUnderflow) {
-                o.isValid = false;
-                o.errors.push("min");
-            }
-
-            if (el.validity.stepMismatch) {
-                o.isValid = false;
-                o.errors.push("step");
-            }
-
-            if (el.validity.valueMissing) {
-                o.isValid = false;
-                o.errors.push("required");
-            }
-        } else {
-            for (i = 0; i < kL; i++) {
-                if (el.getAttribute(keys[i])) {
-                    if (!attributes[keys[i]](el)) {
-                        o.isValid = false;
-                        o.errors.push(keys[i]);
-                    }
+        for (i = 0; i < kL; i++) {
+            if (el.getAttribute(keys[i])) {
+                if (!attributes[keys[i]](el)) {
+                    o.isValid = false;
+                    o.errors.push(keys[i]);
                 }
             }
         }
@@ -352,19 +334,38 @@ var fieldValidator = (function() {
                     return Date.parse(el.value) >= Date.parse(el.getAttribute("min"));
                 },
                 step: function testStep(el) {
-                    var step = parseInt(el.getAttribute("step"), 10);
+                    var step = el.getAttribute("step"),
+                        min = el.getAttribute("min"),
+                        splitValue,
+                        splitMin,
+                        months;
+
+                    if (step === "any") {
+                        return true;
+                    } else {
+                        step = parseInt(step, 10);
+                    }
 
                     // minimum has to be set, otherwise the starting date for step is random
                     if (el.getAttribute("min")) {
                         // step varies based on date type
                         if (el.getAttribute("type").toLowerCase() === "date") {
                             step *= (1000 * 60 * 60 * 24); //step is per day, minimum
-                        } else if (el.getAttribute("type").toLowerCase() === "month") {
-                            // TODO: this is an imprecise evaluation of the step value of a month
-                            step *= (1000 * 60 * 60 * 24 * 30); //step is per month, minimum
-                        }
+                        } else if (el.getAttribute("type").toLowerCase() === "month"){
+                            splitValue = el.value.split("-").map(function(v) {
+                                return parseInt(v, 10);
+                            });
+                            splitMin = el.getAttribute("min").split("-").map(function(v) {
+                                return parseInt(v, 10);
+                            });
 
+                            months = ((splitValue[0] - splitMin[0]) * 12) + splitValue[1] - splitMin[1];
+
+                            return months % step === 0;
+                        }
                         return (Date.parse(el.value) - Date.parse(el.getAttribute("min"))) % step === 0;
+                    } else {
+                        return true;
                     }
                 },
                 required: function testRequired(el) {
@@ -380,33 +381,11 @@ var fieldValidator = (function() {
             },
             i;
 
-        if (el.validity) {
-            if (el.validity.rangeOverflow) {
-                o.isValid = false;
-                o.errors.push("max");
-            }
-
-            if (el.validity.rangeUnderflow) {
-                o.isValid = false;
-                o.errors.push("min");
-            }
-
-            if (el.validity.stepMismatch) {
-                o.isValid = false;
-                o.errors.push("step");
-            }
-
-            if (el.validity.valueMissing) {
-                o.isValid = false;
-                o.errors.push("required");
-            }
-        } else {
-            for (i = 0; i < kL; i++) {
-                if (el.getAttribute(keys[i])) {
-                    if (!attributes[keys[i]](el)) {
-                        o.isValid = false;
-                        o.errors.push(keys[i]);
-                    }
+        for (i = 0; i < kL; i++) {
+            if (el.getAttribute(keys[i])) {
+                if (!attributes[keys[i]](el)) {
+                    o.isValid = false;
+                    o.errors.push(keys[i]);
                 }
             }
         }
@@ -415,18 +394,48 @@ var fieldValidator = (function() {
     }
 
     function validateAbstractTimeType(el) {
-        // HH:MM:SS.XXXXXXXXXXXX
-        // ommitted precisions should be considered as 00 values
-        // HH:MM are always required
-        var o = {
-            field: el,
-            errors: [],
-            isValid: true
-        };
+        var attributes = {
+                max: function testMax(el) {
+                    return parseFloat(el.value.replace(":", "")) <= parseFloat(el.getAttribute("max").replace(":", ""));
+                },
+                min: function testMin(el) {
+                    return parseFloat(el.value.replace(":", "")) >= parseFloat(el.getAttribute("min").replace(":", ""));
+                },
+                step: function testStep(el) {
+                    var time = el.value.split(/\.:/).map(function(v) {
+                            return parseInt(v, 10);
+                        }),
+                        step = el.getAttribute("step"),
+                        timeInSeconds;
 
-        if (el.value === "" || !el.value) {
-            o.errors.push("required");
-            o.isValid = false;
+                    if (step === "any") {
+                        return true;
+                    } else {
+                        step = parseInt(step, 10);
+                        timeInSeconds = time[0] * (60 * 60) + time[1] * 60 + time[2];
+                        return timeInSeconds % step;
+                    }
+                },
+                required: function testRequired(el) {
+                    return el.value.length > 0;
+                }
+            },
+            keys = Object.keys(attributes),
+            kL = keys.length,
+            o = {
+                field: el,
+                errors: [],
+                isValid: true
+            },
+            i;
+
+        for (i = 0; i < kL; i++) {
+            if (el.getAttribute(keys[i])) {
+                if (!attributes[keys[i]](el)) {
+                    o.isValid = false;
+                    o.errors.push(keys[i]);
+                }
+            }
         }
 
         return o;
@@ -541,6 +550,42 @@ var fieldValidator = (function() {
         };
     }
 
+    function browserValidation(el) {
+        var o = {
+            field: el,
+            errors: [],
+            isValid: null
+        };
+
+        if (el.validity.rangeOverflow) {
+            o.errors.push("max");
+        }
+        if (el.validity.rangeUnderflow) {
+            o.errors.push("min");
+        }
+        if (el.validity.stepMismatch) {
+            o.errors.push("step");
+        }
+        if (el.validity.valueMissing) {
+            o.errors.push("required");
+        }
+        if (el.validity.badInput) {
+            o.errors.push("type");
+        }
+        if (el.validity.patternMismatch) {
+            o.errors.push("pattern");
+        }
+        if (el.validity.tooLong) {
+            o.errors.push("maxlength");
+        }
+        if (el.validity.tooShort) {
+            o.errors.push("minlength");
+        }
+        o.isValid = el.validity.valid;
+
+        return o;
+    }
+
     return {
         /**
          * @memberof fieldValidator
@@ -551,49 +596,66 @@ var fieldValidator = (function() {
          * @public
          * @returns {Array} of validation objects
          */
-        validate: function(html) {
+        validate: function(html, useBrowserValidation) {
             // get the fields object
             var f = getFields(html),
-                r = [],
-                tagName = html.tagName.toLowerCase();
+                r = [];
 
             // validate inputs
             if (f.inputs.length > 0) {
-                f.inputs.forEach(function(i) {
-                    var type = i.getAttribute("type").toLowerCase();
+                if (useBrowserValidation) {
+                    f.inputs.forEach(function(i) {
+                        r.push(browserValidation(i));
+                    });
+                } else {
+                    f.inputs.forEach(function(i) {
+                        var type = i.getAttribute("type").toLowerCase();
 
-                    if (type === "text" || type === "email" || type === "url" || type === "tel" || type === "week") {
-                        r.push(validateAbstractStringType(i));
-                    } else if (type === "number") {
-                        r.push(validateAbstractNumericType(i));
-                    } else if (type === "date" || type === "month") {
-                        r.push(validateAbstractDateType(i));
-                    } else if (type === "datetime" || type === "time") {
-                        r.push(validateAbstractTimeType(i));
-                    }
-                });
-            }
+                        if (type === "text" || type === "email" || type === "url" || type === "tel" || type === "week") {
+                            r.push(validateAbstractStringType(i));
+                        } else if (type === "number") {
+                            r.push(validateAbstractNumericType(i));
+                        } else if (type === "date" || type === "month") {
+                            r.push(validateAbstractDateType(i));
+                        } else if (type === "time") {
+                            r.push(validateAbstractTimeType(i));
+                        }
+                    });
 
-            // validate the "type" attribute of all input fields
-            r.forEach(function(report) {
-                if (!validateType(report.field)) {
-                    report.errors.push("type");
-                    report.isValid = false;
+                    // validate the "type" attribute of all input fields
+                    r.forEach(function(report) {
+                        if (!validateType(report.field)) {
+                            report.errors.push("type");
+                            report.isValid = false;
+                        }
+                    });
                 }
-            });
+            }
 
             // validate textareas
             if (f.textareas.length > 0) {
-                f.textareas.forEach(function(t) {
-                    r.push(validateAbstractStringType(t));
-                });
+                if (useBrowserValidation) {
+                    f.textareas.forEach(function(t) {
+                        r.push(browserValidation(t));
+                    });
+                } else {
+                    f.textareas.forEach(function(t) {
+                        r.push(validateAbstractStringType(t));
+                    });
+                }
             }
 
             // validate selects
             if (f.selects.length > 0) {
-                f.selects.forEach(function(s) {
-                    r.push(validateSelect(s));
-                });
+                if (useBrowserValidation) {
+                    f.selects.forEach(function(s) {
+                        r.push(browserValidation(s));
+                    });
+                } else {
+                    f.selects.forEach(function(s) {
+                        r.push(validateSelect(s));
+                    });
+                }
             }
 
             // validate checkboxes

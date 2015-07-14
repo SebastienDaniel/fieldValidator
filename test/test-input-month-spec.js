@@ -60,6 +60,7 @@ describe("A month field", function() {
         expect(v(d)).toEqual([{field: d, errors: ["max"], isValid: false}]);
     });
 
+
     it("should respect the \"step\" attribute", function() {
         d.removeAttribute("max");
         // step validation requires a min date, otherwise step's starting point will be random
@@ -82,4 +83,5 @@ describe("A month field", function() {
         d.value = "2015-11";
         expect(v(d)).toEqual([{field: d, errors: ["step"], isValid: false}]);
     });
+
 });
