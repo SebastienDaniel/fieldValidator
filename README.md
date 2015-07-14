@@ -19,7 +19,13 @@ var validate = require("fieldvalidator").validate;
 Otherwise, just link to the `fieldValidator.min.js` script from `node_modules/fieldvalidator/`
 
 ## How it works
-The `validate()` function expects one argument: an HTML object.
+The `validate()` function expects:
+
+- First argument is mandatory: an HTML object. This is the starting point where fieldValidator will grab all fields to validate.
+- Second *optional* argument (true|false), indicating whether to fallback to browserValidation if it is supported. (*false by default*).
+
+Whether you fallback to browserValidation or not, the output always has the same structure.
+
 
 From that object it will grab all form fields (*input, textarea, select*) and validate them based on their HTML5 form attributes:
 
@@ -30,7 +36,7 @@ From that object it will grab all form fields (*input, textarea, select*) and va
 - pattern
 - required
 - step
-- type (*doesn't currently validate datetime and time types*)
+- type (*doesn't currently validate datetime types*)
 
 It will return an array of validation objects, each object has 3 properties:
 
@@ -125,6 +131,8 @@ You are then free to handle these errors as you see fit.
 ```
 
 ## Change log
+- **2015-07-14** (v2.0.0) - added support for type="time", added support for step="any", fixed type="month" validation, added browserValidation fallback
+- **2015-07-13** (v1.1.3) - adding support for "time" type
 - **2015-07-11** (v1.1.2) - improved code documentation (see github repo). Reduced some unnecessary looping.
 - **2015-07-10** (v1.1.1) - re-added the module.exports or window exposing feature
 - **2015-07-10** (v1.1.0) - added support for `type="date"` and `type="month"` The date format must always be YYYY-mm-dd.
