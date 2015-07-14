@@ -81,5 +81,12 @@ describe("A date field", function() {
         // above step (11 days)
         d.value = "2015-07-21";
         expect(v(d)).toEqual([{field: d, errors: ["step"], isValid: false}]);
+
+        // should support "any"
+        d.setAttribute("step", "any");
+        d.value = "2015-07-19";
+        expect(v(d)).toEqual([{field: d, errors: [], isValid: true}]);
+        d.value = "2015-07-21";
+        expect(v(d)).toEqual([{field: d, errors: [], isValid: true}]);
     });
 });
