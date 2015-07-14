@@ -82,6 +82,15 @@ describe("A month field", function() {
         // above step (4 months)
         d.value = "2015-11";
         expect(v(d)).toEqual([{field: d, errors: ["step"], isValid: false}]);
+
+        // should accept "any"
+        d.setAttribute("step", "any");
+        d.value = "2015-09";
+        expect(v(d)).toEqual([{field: d, errors: [], isValid: true}]);
+
+        // above step (4 months)
+        d.value = "2015-11";
+        expect(v(d)).toEqual([{field: d, errors: [], isValid: true}]);
     });
 
 });
