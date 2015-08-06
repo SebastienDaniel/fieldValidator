@@ -23,6 +23,10 @@ describe("A number field", function() {
         field.value = "0.01";
         expect(v(field)).toEqual([{field: field, errors: [], isValid: true}]);
 
+        field.setAttribute("min", "0.000");
+        expect(v(field)).toEqual([{field: field, errors: [], isValid: true}]);
+
+        field.setAttribute("min", "0.01");
         field.value = "0.005";
         expect(v(field)).toEqual([{field: field, errors: ["min"], isValid: false}]);
 
