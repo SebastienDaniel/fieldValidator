@@ -679,7 +679,8 @@ var fieldValidator = (function() {
             }
 
             return r;
-        }
+        },
+        version: "2.0.1"
     };
 }());
 

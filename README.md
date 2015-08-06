@@ -131,6 +131,7 @@ You are then free to handle these errors as you see fit.
 ```
 
 ## Change log
+- **2015-08-05** (v2.0.1) - added version string to fieldValidator object
 - **2015-07-14** (v2.0.0) - added support for type="time", added support for step="any", fixed type="month" validation, added browserValidation fallback
 - **2015-07-13** (v1.1.3) - adding support for "time" type
 - **2015-07-11** (v1.1.2) - improved code documentation (see github repo). Reduced some unnecessary looping.
