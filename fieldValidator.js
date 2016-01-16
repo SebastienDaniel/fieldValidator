@@ -277,10 +277,10 @@ var fieldValidator = (function() {
     function validateAbstractNumericType(el) {
         var attributes = {
                 max: function testMax(el) {
-                    return parseFloat(el.value) <= parseFloat(el.getAttribute("max"));
+                    return el.value ? parseFloat(el.value) <= parseFloat(el.getAttribute("max")) : true;
                 },
                 min: function testMin(el) {
-                    return parseFloat(el.value) >= parseFloat(el.getAttribute("min"));
+                    return el.value ? parseFloat(el.value) >= parseFloat(el.getAttribute("min")) : true;
                 },
                 step: function testStep(el) {
                     var step = el.getAttribute("step"),

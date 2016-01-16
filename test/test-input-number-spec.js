@@ -123,4 +123,17 @@ describe("A number field", function() {
         field.value = "9";
         expect(v(field)).toEqual([{field: field, errors: [], isValid: true}]);
     });
+
+    it("should not flag errors on empty number field with step value other than 'any' and a min value of 0", function() {
+        var f = document.createElement("input");
+
+        f.setAttribute("type", "number");
+        f.setAttribute("step", "1");
+
+        document.body.appendChild(field);
+
+        expect(v(f)).toEqual([{field: f, errors: [], isValid: true}]);
+        f.setAttribute("min", "0");
+        expect(v(f)).toEqual([{field: f, errors: [], isValid: true}]);
+    });
 });
