@@ -1,7 +1,7 @@
 {
     "name": "fieldvalidator",
     "description": "Use HTML5 field element attributes to validate field input dynamically. Allows for flexible validation management without relying on browser implementations",
-    "version": "2.0.1",
+    "version": "2.1.0",
     "homepage": "https://github.com/SebastienDaniel/fieldValidator",
     "keywords": [
         "input",

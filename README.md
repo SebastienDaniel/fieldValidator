@@ -131,6 +131,7 @@ You are then free to handle these errors as you see fit.
 ```
 
 ## Change log
+- **2016-01-25** (v2.1.0) - improved support for datetime, added pattern matching support for datetime type fields
 - **2015-08-05** (v2.0.1) - added version string to fieldValidator object
 - **2015-07-14** (v2.0.0) - added support for type="time", added support for step="any", fixed type="month" validation, added browserValidation fallback
 - **2015-07-13** (v1.1.3) - adding support for "time" type
