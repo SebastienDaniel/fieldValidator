@@ -79,7 +79,7 @@ describe("A email field", function() {
 
         // no TLD
         field.value = "sebastien@sebweb";
-        expect(v(field)).toEqual([{field: field, errors: ["type"], isValid: false}]);
+        expect(v(field)).toEqual([{field: field, errors: [], isValid: true}]);
     });
 
     it("should not flag errors for invalid string-type validation attributes", function() {

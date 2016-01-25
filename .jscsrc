@@ -30,7 +30,7 @@
     "disallowTrailingWhitespace": true,
     "disallowYodaConditions": true,
     "disallowPaddingNewlinesInBlocks": true,
-    "maximumLineLength": 200,
+    "maximumLineLength": 300,
     "requireBlocksOnNewline": true,
     "requireCamelCaseOrUpperCaseIdentifiers": "ignoreProperties",
     "requireCapitalizedConstructors": true,

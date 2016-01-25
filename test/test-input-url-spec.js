@@ -20,7 +20,7 @@ describe("A url field", function() {
         expect(v(field)).toEqual([{field: field, errors: [], isValid: true}]);
 
         // FILE
-        field.value = "file:///W:/materialModules";
+        field.value = "file://W:/materialModules";
         expect(v(field)).toEqual([{field: field, errors: [], isValid: true}]);
     });
 

@@ -196,26 +196,23 @@ var fieldValidator = (function() {
         // patterns provided by ZURB foundation abide https://github.com/zurb/foundation/blob/master/js/foundation/foundation.abide.js
         var typePatterns = {
                 "email": /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
-                "date": /(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))$/, // YYYY-MM-DD
-                "week": /(?:19|20)[0-9]{2}-W(?:0[1-9]|[1-4][0-9]|5[0-2])$/,
-                "month": /(?:19|20)[0-9]{2}-(?:0[1-9]|1[0-2])$/,
-                "datetime": /^([0-9]{4})(\-0[1-9]|\-1[0-2])?(\-[0-2][0-9]|\-3[0-1])?(T| )([0-1][0-9]:|2[0-3]:)?([0-5][0-9])?(:[0-5][0-9])?(\.\d{1,3})?(Z|([\-\+](0[0-9]|1[0-4]):(00|15|30|45))|$)/,
+                "date": /[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))$/, // YYYY-MM-DD
+                "week": /[0-9]{4}-W(?:0[1-9]|[1-4][0-9]|5[0-2])$/,
+                "month": /[0-9]{4}-(?:0[1-9]|1[0-2])$/,
+                "datetime": /^([0-9]{4})((\-0[1-9]|\-1[0-2])|$)((\-[0-2][0-9]|\-3[0-1])|$)((T| )(?=\d)([0-1][0-9]|2[0-3])(:[0-5][0-9])(:[0-5][0-9])(\.\d{1,3})?(Z|([\-\+](0[0-9]|1[0-4]):(00|15|30|45))|$))$/,
                 "number": /^[-+]?\d*(?:[\.\,]\d+)?$/,
                 "url": /^(https?|ftp|file|ssh):\/\/([-;:&=\+\$,\w]+@{1})?([-A-Za-z0-9\.]+)+:?(\d+)?((\/[-\+~%\/\.\w]+)?\??([-\+=&;%@\.\w]+)?#?([\w]+)?)?/,
                 "time": /^(0[0-9]|1[0-9]|2[0-3])(:[0-5][0-9]){1,2}(\.[0-9]*)?$/, // HH:MM:SS.ddd...(n)d
                 "color": /^#?([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$/ // #FFF #FFFFFF
             },
             type = el.getAttribute("type").toLowerCase(),
-            result = true;
+            res;
 
-        // if browser has the validity object, us its properties to validate type
-        if (el.validity) {
-            result = !el.validity.badInput && !el.validity.typeMismatch;
-        } else if (typePatterns[type]) {
-            result = typePatterns[type].test(el.value);
+        if (el.value !== "" && el.value && typePatterns[type]) {
+            return typePatterns[type].test(el.value);
+        } else {
+            return true;
         }
-
-        return result;
     }
 
     /**
@@ -620,7 +617,7 @@ var fieldValidator = (function() {
                     f.inputs.forEach(function(i) {
                         var type = i.getAttribute("type").toLowerCase();
 
-                        if (type === "text" || type === "email" || type === "url" || type === "tel" || type === "week") {
+                        if (type === "text" || type === "email" || type === "url" || type === "tel" || type === "week" || type === "datetime") {
                             r.push(validateAbstractStringType(i));
                         } else if (type === "number") {
                             r.push(validateAbstractNumericType(i));
